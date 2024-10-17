@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, Link } from "react-router-dom";
 import Logo from "../components/Logo";
 import { NavMenu } from "../components/NavMenu";
 
@@ -9,16 +9,16 @@ export default function AppLayout() {
                 <div className="flex flex-col gap-7 px-2 lg:flex-row lg:gap-0 lg:px-0 items-center justify-between">
                     <div className="flex items-center gap-3 justify-center">
                         <Logo />
-                        <h2 className="font-outfit font-bold text-3xl text-white">
+                        <Link className="font-outfit font-bold text-3xl text-white" to="/">
                             King´s Man Barberia
-                        </h2>
+                        </Link>
                     </div>
 
                     <NavMenu />
                 </div>
             </header>
 
-            <main className="container max-w-screen-2xl mx-auto mt-10 p-5">
+            <main className="container max-w-screen-xl mx-auto mt-10 p-5">
                 <Outlet />
             </main>
         </>
