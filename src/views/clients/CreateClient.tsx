@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import FormClient from "../../components/clients/FormClient";
+import { ClientFormData } from "../../types";
 
 export default function CreateClient() {
-    const initialValues = {
+    const initialValues: ClientFormData = {
         nombre: "",
         apellido_paterno: "",
         apellido_materno: "",
@@ -16,7 +17,7 @@ export default function CreateClient() {
         formState: { errors },
     } = useForm({ defaultValues: initialValues });
 
-    const handleForm = (data: any) => {
+    const handleForm = (data: ClientFormData) => {
         console.log(data);
     };
 

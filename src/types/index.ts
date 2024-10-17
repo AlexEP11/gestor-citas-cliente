@@ -18,3 +18,19 @@ export type AppointmentFormData = Pick<
     Appointment,
     "id_servicio" | "fecha_inicio" | "id_cliente"
 > & { hora_inicio: string };
+
+/* Clients */
+
+export const clientSchema = z.object({
+    id_cliente: z.number(),
+    nombre: z.string(),
+    apellido_paterno: z.string(),
+    apellido_materno: z.string(),
+    telefono: z.string(),
+});
+export type Client = z.infer<typeof clientSchema>;
+export type DraftClient = Omit<Client, "id_cliente">;
+export type ClientFormData = Pick<
+    Client,
+    "nombre" | "apellido_paterno" | "apellido_materno" | "telefono"
+>;

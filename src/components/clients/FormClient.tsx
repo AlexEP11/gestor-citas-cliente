@@ -1,19 +1,10 @@
 import { UseFormRegister, FieldErrors } from "react-hook-form";
 import ErrorMessage from "../ErrorMessage";
+import { ClientFormData } from "../../types";
 
 type FormClientProps = {
-    register: UseFormRegister<{
-        nombre: string;
-        apellido_paterno: string;
-        apellido_materno: string;
-        telefono: string;
-    }>;
-    errors: FieldErrors<{
-        nombre: string;
-        apellido_paterno: string;
-        apellido_materno: string;
-        telefono: string;
-    }>;
+    register: UseFormRegister<ClientFormData>;
+    errors: FieldErrors<ClientFormData>;
 };
 
 export default function FormClient({ register, errors }: FormClientProps) {
