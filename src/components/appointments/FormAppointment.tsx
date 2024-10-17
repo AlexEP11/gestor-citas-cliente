@@ -1,33 +1,24 @@
 import { ChangeEvent, useState } from "react";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { formatDate } from "../../utils/formatDate";
+import { AppointmentFormData } from "../../types";
 import ErrorMessage from "../ErrorMessage";
 
 type FormAppointmentProps = {
-    register: UseFormRegister<{
-        id_cliente: string;
-        id_servicio: string;
-        id_barbero: number;
-        fecha_inicio: string;
-        hora_inicio: string;
-        id_estado: number;
-    }>;
-    errors: FieldErrors<{
-        id_cliente: string;
-        id_servicio: string;
-        id_barbero: number;
-        fecha_inicio: string;
-        hora_inicio: string;
-        id_estado: number;
-    }>;
+    register: UseFormRegister<AppointmentFormData>;
+    errors: FieldErrors<AppointmentFormData>;
 };
 
 export default function FormAppointment({ register, errors }: FormAppointmentProps) {
     const [selectedDate, setSelectedDate] = useState("");
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const formattedDate = formatDate(e.target.value); // Formatear la fecha
+    const finalDate = () => {
+        const formattedDate = formatDate(selectedDate); // Formatear la fecha
         console.log(formattedDate);
+        // Concatenar la fecha formateada con la hora seleccionada
+    };
+
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         setSelectedDate(e.target.value);
     };
 

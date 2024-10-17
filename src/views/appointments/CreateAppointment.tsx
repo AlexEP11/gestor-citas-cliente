@@ -1,15 +1,14 @@
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import FormAppointment from "../../components/appointments/FormAppointment";
+import { AppointmentFormData } from "../../types";
 
 export default function CreateAppointment() {
-    const initialValues = {
-        id_cliente: "",
-        id_servicio: "",
-        id_barbero: 0,
-        fecha_inicio: "",
+    const initialValues: AppointmentFormData = {
+        id_cliente: 0,
+        id_servicio: 0,
+        fecha_inicio: new Date(),
         hora_inicio: "",
-        id_estado: 1,
     };
 
     // Hook de formulario para la cita
@@ -19,7 +18,7 @@ export default function CreateAppointment() {
         formState: { errors },
     } = useForm({ defaultValues: initialValues });
 
-    const handleForm = (data: any) => {
+    const handleForm = (data: AppointmentFormData) => {
         console.log(data);
     };
 
