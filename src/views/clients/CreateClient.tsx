@@ -5,6 +5,8 @@ import FormClient from "../../components/clients/FormClient";
 export default function CreateClient() {
     const initialValues = {
         nombre: "",
+        apellido_paterno: "",
+        apellido_materno: "",
         telefono: "",
     };
 
