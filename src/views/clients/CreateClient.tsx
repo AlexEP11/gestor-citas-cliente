@@ -1,10 +1,23 @@
 import { Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import FormClient from "../../components/clients/FormClient";
 
 export default function CreateClient() {
-    const defaultValuesClient = {
+    const initialValues = {
         nombre: "",
         telefono: "",
     };
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({ defaultValues: initialValues });
+
+    const handleForm = (data: any) => {
+        console.log(data);
+    };
+
     return (
         <>
             <div className="max-w-3xl mx-auto">
@@ -24,7 +37,12 @@ export default function CreateClient() {
                     </Link>
                 </nav>
 
-                <form className="bg-ivory_sand shadow-md p-10 rounded-md mt-10">
+                <form
+                    className="bg-ivory_sand shadow-md p-10 rounded-md mt-10"
+                    onSubmit={handleSubmit(handleForm)}
+                >
+                    <FormClient register={register} errors={errors} />
+
                     <input
                         type="submit"
                         className="w-full bg-bronze_earth p-3 font-bold text-white uppercase rounded-md cursor-pointer hover:bg-[#473c2f] transition-colors"
