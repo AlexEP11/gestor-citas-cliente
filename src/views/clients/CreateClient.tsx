@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import FormClient from "../../components/clients/FormClient";
 import { ClientFormData } from "../../types";
+import { createClient } from "../../api/ClientAPI";
 
 export default function CreateClient() {
     const initialValues: ClientFormData = {
@@ -18,7 +19,7 @@ export default function CreateClient() {
     } = useForm({ defaultValues: initialValues });
 
     const handleForm = (data: ClientFormData) => {
-        console.log(data);
+        createClient(data);
     };
 
     return (
