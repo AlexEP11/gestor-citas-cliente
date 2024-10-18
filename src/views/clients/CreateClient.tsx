@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import FormClient from "../../components/clients/FormClient";
 import { ClientFormData } from "../../types";
 import { createClient } from "../../api/ClientAPI";
+import { toast } from "react-toastify";
 
 export default function CreateClient() {
     const navigate = useNavigate();
@@ -20,9 +21,15 @@ export default function CreateClient() {
         formState: { errors },
     } = useForm({ defaultValues: initialValues });
 
-    const handleForm = async (data: ClientFormData) => {
-        await createClient(data);
-        navigate("/");
+    const handleForm = async (formData: ClientFormData) => {
+        const data = await createClient(formData);
+
+        if (data) {
+            toast.success("Cliente registrado");
+            navigate("/");
+        } else {
+            toast.error("Ha ocurrido un error al registrar al cliente"); // Mostrar mensaje de error
+        }
     };
 
     return (

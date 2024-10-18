@@ -1,6 +1,8 @@
 import { Outlet, Link } from "react-router-dom";
 import Logo from "../components/Logo";
 import { NavMenu } from "../components/NavMenu";
+import { Slide, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function AppLayout() {
     return (
@@ -21,6 +23,15 @@ export default function AppLayout() {
             <main className="container max-w-screen-xl mx-auto mt-10 p-5">
                 <Outlet />
             </main>
+
+            <ToastContainer
+                pauseOnFocusLoss={false}
+                pauseOnHover={false}
+                position="bottom-right"
+                theme="dark"
+                transition={Slide}
+                draggable
+            />
         </>
     );
 }
