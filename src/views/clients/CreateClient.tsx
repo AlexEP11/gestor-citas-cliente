@@ -49,6 +49,12 @@ export default function CreateClient() {
                     >
                         Agenda de Citas
                     </Link>
+                    <Link
+                        className="bg-steelGray hover:bg-deep_teal cursor-pointer px-10 py-3 rounded-md font-outfit text-white font-bold transition-colors text-center"
+                        to="/citas/agendar"
+                    >
+                        Registrar Cita
+                    </Link>
                 </nav>
 
                 <form
