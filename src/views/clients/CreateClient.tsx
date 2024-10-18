@@ -1,10 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import FormClient from "../../components/clients/FormClient";
 import { ClientFormData } from "../../types";
 import { createClient } from "../../api/ClientAPI";
 
 export default function CreateClient() {
+    const navigate = useNavigate();
+
     const initialValues: ClientFormData = {
         nombre: "",
         apellido_paterno: "",
@@ -18,8 +20,9 @@ export default function CreateClient() {
         formState: { errors },
     } = useForm({ defaultValues: initialValues });
 
-    const handleForm = (data: ClientFormData) => {
-        createClient(data);
+    const handleForm = async (data: ClientFormData) => {
+        await createClient(data);
+        navigate("/");
     };
 
     return (
