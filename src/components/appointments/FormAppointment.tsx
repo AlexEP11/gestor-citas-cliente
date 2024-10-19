@@ -1,7 +1,9 @@
 import { ChangeEvent, useState } from "react";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { formatDate } from "../../utils/formatDate";
-import { AppointmentFormData } from "../../types";
+import { AppointmentFormData, Client } from "../../types";
+import { getClients } from "../../api/ClientAPI";
+import { useQuery } from "@tanstack/react-query";
 import ErrorMessage from "../ErrorMessage";
 
 type FormAppointmentProps = {
@@ -22,6 +24,24 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
         setSelectedDate(e.target.value);
     };
 
+    // Función manejadora para el evento onChange
+    const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
+        console.log(e.target.value);
+    };
+
+    // Extraccion de clientes
+    const { data: clients, isLoading: isLoadingClients } = useQuery<Client[]>({
+        queryKey: ["clients-list"],
+        queryFn: getClients,
+    });
+
+    // Ordenar los clientes alfabéticamente por nombre
+    const sortedClients = clients?.slice().sort((a, b) => {
+        const nameA = `${a.nombre} ${a.apellido_paterno} ${a.apellido_materno}`.toLowerCase();
+        const nameB = `${b.nombre} ${b.apellido_paterno} ${b.apellido_materno}`.toLowerCase();
+        return nameA.localeCompare(nameB);
+    });
+
     return (
         <>
             <div className="space-y-3 mb-5 flex flex-col">
@@ -29,17 +49,24 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
                     Cliente
                 </label>
                 <select
+                    defaultValue="0"
                     id="id_cliente"
                     className="block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:border-transparent text-black cursor-pointer"
                     {...register("id_cliente", {
                         required: "Debe seleccionar un cliente",
                     })}
+                    onChange={handleSelectChange} // Maneja el valor de cada option (id del cliente)
                 >
-                    <option disabled value="">
+                    <option disabled value="0">
                         --- Seleccionar Cliente --
                     </option>
 
                     {/* Aquí va el map de opciones */}
+                    {sortedClients?.map((client) => (
+                        <option key={client.id_cliente} value={client.id_cliente}>
+                            {client.nombre} {client.apellido_paterno} {client.apellido_materno}
+                        </option>
+                    ))}
                 </select>
 
                 {errors.id_cliente && <ErrorMessage>{errors.id_cliente.message}</ErrorMessage>}
