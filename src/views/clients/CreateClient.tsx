@@ -24,12 +24,12 @@ export default function CreateClient() {
 
     const { mutate } = useMutation({
         mutationFn: createClient,
-        onSuccess: () => {
-            toast.success("Cliente registrado");
+        onSuccess: (data) => {
+            toast.success(data.message);
             navigate("/");
         },
-        onError: () => {
-            toast.error("Ha ocurrido un error al registrar al cliente");
+        onError: (error) => {
+            toast.error(error.message);
         },
     });
 
