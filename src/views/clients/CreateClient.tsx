@@ -4,6 +4,7 @@ import FormClient from "../../components/clients/FormClient";
 import { ClientFormData } from "../../types";
 import { createClient } from "../../api/ClientAPI";
 import { toast } from "react-toastify";
+import { useMutation } from "@tanstack/react-query";
 
 export default function CreateClient() {
     const navigate = useNavigate();
@@ -21,15 +22,19 @@ export default function CreateClient() {
         formState: { errors },
     } = useForm({ defaultValues: initialValues });
 
-    const handleForm = async (formData: ClientFormData) => {
-        const data = await createClient(formData);
-
-        if (data) {
+    const { mutate } = useMutation({
+        mutationFn: createClient,
+        onSuccess: () => {
             toast.success("Cliente registrado");
             navigate("/");
-        } else {
-            toast.error("Ha ocurrido un error al registrar al cliente"); // Mostrar mensaje de error
-        }
+        },
+        onError: () => {
+            toast.error("Ha ocurrido un error al registrar al cliente");
+        },
+    });
+
+    const handleForm = async (formData: ClientFormData) => {
+        mutate(formData);
     };
 
     return (
