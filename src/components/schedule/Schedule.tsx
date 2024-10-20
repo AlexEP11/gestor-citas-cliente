@@ -22,6 +22,7 @@ export default function Schedule() {
                 week: "Semana",
                 day: "Día",
             }}
+            defaultView={isMobile ? "day" : "month"}
             formats={{
                 monthHeaderFormat: (date) => moment(date).format("MMM").toUpperCase(),
                 dayFormat: (date) =>
