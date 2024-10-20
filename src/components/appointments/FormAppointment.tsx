@@ -57,9 +57,15 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
                     })}
                     onChange={handleSelectChange} // Maneja el valor de cada option (id del cliente)
                 >
-                    <option disabled value="0">
-                        --- Seleccionar Cliente --
-                    </option>
+                    {isLoadingClients ? (
+                        <option disabled value="0">
+                            Cargando clientes...
+                        </option>
+                    ) : (
+                        <option disabled value="0">
+                            --- Seleccionar Cliente --
+                        </option>
+                    )}
 
                     {/* Aquí va el map de opciones */}
                     {sortedClients?.map((client) => (
