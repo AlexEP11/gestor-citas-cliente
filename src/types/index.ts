@@ -14,10 +14,14 @@ export const appointmentSchema = z.object({
 
 export type Appointment = z.infer<typeof appointmentSchema>;
 export type DraftAppointment = Omit<Appointment, "id_cita">;
-export type AppointmentFormData = Pick<
-    Appointment,
-    "id_servicio" | "fecha_inicio" | "id_cliente"
-> & { hora_inicio: string };
+export type AppointmentFormData = Omit<Appointment, "token"> & {
+    cliente: Appointment["id_cliente"]; // ID del cliente
+    hora_inicio: Appointment["fecha_inicio"]; // Fecha y hora de inicio
+    servicio: Appointment["id_servicio"]; // ID del servicio
+    title: string; // Título del evento, para que sea compatible con el calendario
+    start: Date; // Fecha y hora de inicio del evento
+    end: Date; // Fecha y hora de finalización del evento
+};
 
 /* Clients */
 
@@ -34,3 +38,13 @@ export type ClientFormData = Pick<
     Client,
     "nombre" | "apellido_paterno" | "apellido_materno" | "telefono"
 >;
+
+/* Services */
+
+export const serviceSchema = z.object({
+    id_servicio: z.number(),
+    nombre: z.string(),
+    precio: z.string(),
+    tiempo_aproximado: z.number(),
+});
+export type Service = z.infer<typeof serviceSchema>;

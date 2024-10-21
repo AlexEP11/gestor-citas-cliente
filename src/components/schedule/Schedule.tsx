@@ -1,5 +1,10 @@
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getAppointments } from "../../api/AppointmentAPI";
+import { getClients } from "../../api/ClientAPI";
+import { Appointment, AppointmentFormData, Client, Service } from "../../types";
+import { getServices } from "../../api/ServicesAPI";
 import ScheduleModal from "./ScheduleModa";
 import moment from "moment/moment";
 import "moment/locale/es";
@@ -11,75 +16,52 @@ export default function Schedule() {
 
     // Estado para controlar el modal y la cita seleccionada
     const [modalOpen, setModalOpen] = useState(false);
-    const [selectedCita, setSelectedCita] = useState(null);
+    const [selectedCita, setSelectedCita] = useState<AppointmentFormData | null>(null);
 
-    // Eventos de prueba
-    const events = [
-        {
-            id: 1,
-            title: "Cita con Juan",
-            start: new Date(2024, 9, 21, 10, 0), // Octubre 21, 2024 a las 10:00 AM
-            end: new Date(2024, 9, 21, 11, 0),
-            cliente: "Juan Pérez",
-            fecha_inicio: "2024/10/21",
-            hora_inicio: "10:00 AM",
-            barbero: "Carlos",
-            servicio: "Corte de cabello",
-            estado: "Confirmada",
-        },
-        {
-            id: 1,
-            title: "Cita con Juan",
-            start: new Date(2024, 9, 21, 19, 0), // Octubre 21, 2024 a las 10:00 AM
-            end: new Date(2024, 9, 21, 20, 0),
-            cliente: "Juan Pérez",
-            fecha_inicio: "2024/10/21",
-            hora_inicio: "10:00 AM",
-            barbero: "Carlos",
-            servicio: "Corte de cabello",
-            estado: "Confirmada",
-        },
-        {
-            id: 1,
-            title: "Cita con Juan",
-            start: new Date(2024, 9, 21, 13, 0), // Octubre 21, 2024 a las 10:00 AM
-            end: new Date(2024, 9, 21, 14, 0),
-            cliente: "Juan Pérez",
-            fecha_inicio: "2024/10/21",
-            hora_inicio: "10:00 AM",
-            barbero: "Carlos",
-            servicio: "Corte de cabello",
-            estado: "Confirmada",
-        },
-        {
-            id: 1,
-            title: "Cita con Juan",
-            start: new Date(2024, 9, 21, 14, 0), // Octubre 21, 2024 a las 10:00 AM
-            end: new Date(2024, 9, 21, 15, 0),
-            cliente: "Juan Pérez",
-            fecha_inicio: "2024/10/21",
-            hora_inicio: "10:00 AM",
-            barbero: "Carlos",
-            servicio: "Corte de cabello",
-            estado: "Confirmada",
-        },
-        {
-            id: 2,
-            title: "Cita con María",
-            start: new Date(2024, 9, 22, 12, 0),
-            end: new Date(2024, 9, 22, 13, 0),
-            cliente: "María López",
-            fecha_inicio: "2024/10/22",
-            hora_inicio: "12:00 PM",
-            barbero: "David",
-            servicio: "Tinte",
-            estado: "Pendiente",
-        },
-    ];
+    // EN TODAS ESTAS SE LES DEBE PONER EL ID DEL BARBERO
+
+    // Obtener las citas
+    const { data: citas } = useQuery<Appointment[]>({
+        queryKey: ["appointment"],
+        queryFn: getAppointments,
+    });
+
+    // Obtener los clientes
+    const { data: clients } = useQuery<Client[]>({
+        queryKey: ["clients"],
+        queryFn: getClients,
+    });
+
+    // Obtener los servicios
+    const { data: services } = useQuery<Service[]>({
+        queryKey: ["services", "all"],
+        queryFn: getServices,
+    });
+
+    // Crear un mapa de clientes para acceso rápido
+    const clientMap = clients
+        ? Object.fromEntries(clients.map((client) => [client.id_cliente, client.nombre]))
+        : {};
+
+    // Crear un mapa de servicios para acceso rápido
+    const serviceMap = services
+        ? Object.fromEntries(services.map((service) => [service.id_servicio, service.nombre]))
+        : {};
+
+    // Crear eventos con nombres de clientes
+    const events =
+        citas?.map((cita) => ({
+            id: cita.id_cita,
+            title: `Cita con ${clientMap[cita.id_cliente] || "Cliente Desconocido"}`,
+            start: new Date(cita.fecha_inicio),
+            end: new Date(cita.fecha_finalizacion),
+            cliente: clientMap[cita.id_cliente] || "Cliente Desconocido",
+            hora_inicio: cita.fecha_inicio,
+            servicio: serviceMap[cita.id_servicio] || "Servicio Desconocido", // Cambia aquí
+        })) || ([] as AppointmentFormData[]);
 
     // Función para abrir el modal cuando se hace clic en un evento
-    // Poner el type de Citas de los eventos
-    const handleSelectEvent = (e) => {
+    const handleSelectEvent = (e: AppointmentFormData) => {
         setSelectedCita(e); // Guardar la cita seleccionada
         setModalOpen(true); // Abrir el modal
     };
@@ -87,7 +69,7 @@ export default function Schedule() {
     return (
         <>
             <Calendar
-                events={events}
+                events={events as AppointmentFormData[]}
                 onSelectEvent={handleSelectEvent}
                 min={new Date(0, 0, 0, 8, 0)} // Horario de apertura
                 max={new Date(0, 0, 0, 21, 0)} // Horario de cierre
@@ -110,11 +92,11 @@ export default function Schedule() {
                     dayFormat: (date) =>
                         isMobile
                             ? moment(date).format("dd").toUpperCase()
-                            : moment(date).format("dddd").toUpperCase(), // Iniciales en móviles
+                            : moment(date).format("dddd").toUpperCase(),
                     weekdayFormat: (date) =>
                         isMobile
                             ? moment(date).format("dd").toUpperCase()
-                            : moment(date).format("dddd").toUpperCase(), // Iniciales en móviles
+                            : moment(date).format("dddd").toUpperCase(),
                 }}
             />
 
@@ -122,7 +104,11 @@ export default function Schedule() {
             <ScheduleModal
                 isOpen={modalOpen}
                 onClose={() => setModalOpen(false)}
-                cita={selectedCita!}
+                cita={{
+                    cliente: String(selectedCita?.cliente) || "", // Convertir a string
+                    hora_inicio: new Date(selectedCita?.hora_inicio!) || new Date(), // Usar aserción no nula
+                    servicio: selectedCita?.servicio || 0, // Asignar un valor por defecto
+                }}
             />
         </>
     );

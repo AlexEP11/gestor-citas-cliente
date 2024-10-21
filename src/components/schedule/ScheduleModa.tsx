@@ -1,14 +1,15 @@
 import { useEffect, MouseEvent } from "react";
 import ReactDOM from "react-dom";
+import { formatearHora } from "../../utils/formatDate";
+import { Appointment } from "../../types";
 
 type ScheduleModalProps = {
     isOpen: boolean;
     onClose: () => void;
-    // Modificar este tipo para las verdaderas citas
     cita: {
-        cliente: string;
-        hora_inicio: string;
-        servicio: string;
+        cliente: string | number;
+        hora_inicio: Appointment["fecha_inicio"];
+        servicio: Appointment["id_servicio"];
     };
 };
 
@@ -23,7 +24,6 @@ export default function ScheduleModal({ isOpen, onClose, cita }: ScheduleModalPr
             document.body.style.overflow = "unset"; // Habilitar el scroll
         }
 
-        // Cleanup: Restaurar el scroll cuando el componente se desmonte
         return () => {
             document.body.style.overflow = "unset";
         };
@@ -32,7 +32,6 @@ export default function ScheduleModal({ isOpen, onClose, cita }: ScheduleModalPr
     if (!isOpen || !modalRoot) return null; // Verifica si está abierto y si modalRoot existe
 
     const handleBackdropClick = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
-        // Verifica si el clic se realizó en el fondo (backdrop) y no en el contenido del modal
         if (e.target === e.currentTarget) {
             onClose(); // Cerrar el modal
         }
@@ -57,7 +56,7 @@ export default function ScheduleModal({ isOpen, onClose, cita }: ScheduleModalPr
                             type="text"
                             id="cliente"
                             className="block w-full px-4 py-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm focus:border-transparent text-black cursor-pointer"
-                            value={cita?.cliente}
+                            value={cita?.cliente} // Aquí se usa el nombre del cliente
                             disabled
                         />
                     </div>
@@ -70,7 +69,7 @@ export default function ScheduleModal({ isOpen, onClose, cita }: ScheduleModalPr
                             type="text"
                             id="hora"
                             className="block w-full px-4 py-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm focus:border-transparent text-black cursor-pointer"
-                            value={cita?.hora_inicio}
+                            value={formatearHora(new Date(cita?.hora_inicio))}
                             disabled
                         />
                     </div>

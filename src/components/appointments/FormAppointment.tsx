@@ -78,6 +78,24 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
                 {errors.id_cliente && <ErrorMessage>{errors.id_cliente.message}</ErrorMessage>}
             </div>
             <div className="space-y-3 mb-5 flex flex-col">
+                <label htmlFor="id_servicio" className="text-base font-bold uppercase">
+                    Servicio
+                </label>
+                <select
+                    id="id_servicio"
+                    className="block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:border-transparent text-black cursor-pointer"
+                    {...register("id_servicio", {
+                        required: "Debe seleccionar un servicio",
+                    })}
+                >
+                    <option disabled value="">
+                        --- Seleccionar Servicio --
+                    </option>
+                    {/* Aquí va el map de servicio */}
+                </select>
+                {errors.id_servicio && <ErrorMessage>{errors.id_servicio.message}</ErrorMessage>}
+            </div>
+            <div className="space-y-3 mb-5 flex flex-col">
                 <label htmlFor="fecha_inicio" className="text-base font-bold uppercase">
                     Fecha de la Cita
                 </label>
@@ -111,24 +129,6 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
                     {/* Aquí va el map de horas */}
                 </select>
                 {errors.hora_inicio && <ErrorMessage>{errors.hora_inicio.message}</ErrorMessage>}
-            </div>
-            <div className="space-y-3 mb-5 flex flex-col">
-                <label htmlFor="id_servicio" className="text-base font-bold uppercase">
-                    Servicio
-                </label>
-                <select
-                    id="id_servicio"
-                    className="block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:border-transparent text-black cursor-pointer"
-                    {...register("id_servicio", {
-                        required: "Debe seleccionar un servicio",
-                    })}
-                >
-                    <option disabled value="">
-                        --- Seleccionar Servicio --
-                    </option>
-                    {/* Aquí va el map de servicio */}
-                </select>
-                {errors.id_servicio && <ErrorMessage>{errors.id_servicio.message}</ErrorMessage>}
             </div>
         </>
     );
