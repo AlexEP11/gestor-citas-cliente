@@ -9,12 +9,18 @@ export const appointmentSchema = z.object({
     fecha_inicio: z.date(),
     fecha_finalizacion: z.date(),
     id_estado: z.number(),
-    token: z.boolean(),
 });
 
 export type Appointment = z.infer<typeof appointmentSchema>;
-export type DraftAppointment = Omit<Appointment, "id_cita">;
-export type AppointmentFormData = Omit<Appointment, "token"> & {
+
+export type AppointmentFormData = {
+    id_cliente: Appointment["id_cliente"];
+    id_servicio: Appointment["id_servicio"];
+    fecha_inicio: string;
+    hora_inicio?: string;
+};
+
+export type AppointmentFormDataSchedule = {
     cliente: Appointment["id_cliente"]; // ID del cliente
     hora_inicio: Appointment["fecha_inicio"]; // Fecha y hora de inicio
     servicio: Appointment["id_servicio"]; // ID del servicio
@@ -48,3 +54,17 @@ export const serviceSchema = z.object({
     tiempo_aproximado: z.number(),
 });
 export type Service = z.infer<typeof serviceSchema>;
+
+/* Hours */
+
+export const hoursSchema = z.object({
+    id_barbero: z.number(),
+    id_servicio: z.number(),
+    fecha: z.string(),
+});
+
+export type AvailableHours = {
+    available_slots: string[];
+};
+
+export type DraftHours = z.infer<typeof hoursSchema>;

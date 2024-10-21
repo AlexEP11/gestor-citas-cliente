@@ -7,7 +7,7 @@ export default function CreateAppointment() {
     const initialValues: AppointmentFormData = {
         id_cliente: 0,
         id_servicio: 0,
-        fecha_inicio: new Date(),
+        fecha_inicio: "",
         hora_inicio: "",
     };
 

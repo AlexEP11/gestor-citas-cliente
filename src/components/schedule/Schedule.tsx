@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getAppointmentsFilter } from "../../api/AppointmentAPI";
 import { getClients } from "../../api/ClientAPI";
-import { Appointment, AppointmentFormData, Client, Service } from "../../types";
+import { Appointment, AppointmentFormDataSchedule, Client, Service } from "../../types";
 import { getServices } from "../../api/ServicesAPI";
 import ScheduleModal from "./ScheduleModa";
 import moment from "moment/moment";
@@ -16,7 +16,7 @@ export default function Schedule() {
 
     // Estado para controlar el modal y la cita seleccionada
     const [modalOpen, setModalOpen] = useState(false);
-    const [selectedCita, setSelectedCita] = useState<AppointmentFormData | null>(null);
+    const [selectedCita, setSelectedCita] = useState<AppointmentFormDataSchedule | null>(null);
 
     // EN TODAS ESTAS SE LES DEBE PONER EL ID DEL BARBERO
 
@@ -58,10 +58,10 @@ export default function Schedule() {
             cliente: clientMap[cita.id_cliente] || "Cliente Desconocido",
             hora_inicio: cita.fecha_inicio,
             servicio: serviceMap[cita.id_servicio] || "Servicio Desconocido",
-        })) || ([] as AppointmentFormData[]);
+        })) || ([] as AppointmentFormDataSchedule[]);
 
     // Función para abrir el modal cuando se hace clic en un evento
-    const handleSelectEvent = (e: AppointmentFormData) => {
+    const handleSelectEvent = (e: AppointmentFormDataSchedule) => {
         setSelectedCita(e); // Guardar la cita seleccionada
         setModalOpen(true); // Abrir el modal
     };
@@ -69,7 +69,7 @@ export default function Schedule() {
     return (
         <>
             <Calendar
-                events={events as AppointmentFormData[]}
+                events={events as AppointmentFormDataSchedule[]}
                 onSelectEvent={handleSelectEvent}
                 min={new Date(0, 0, 0, 8, 0)} // Horario de apertura
                 max={new Date(0, 0, 0, 21, 0)} // Horario de cierre

@@ -1,10 +1,10 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
-import { formatDate } from "../../utils/formatDate";
-import { AppointmentFormData, Client, Service } from "../../types";
+import { AppointmentFormData, AvailableHours, Client, Service } from "../../types";
 import { getClients } from "../../api/ClientAPI";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { getServices } from "../../api/ServicesAPI";
+import { createValidHour } from "../../api/HoursAPI";
 import ErrorMessage from "../ErrorMessage";
 
 type FormAppointmentProps = {
@@ -14,25 +14,35 @@ type FormAppointmentProps = {
 
 export default function FormAppointment({ register, errors }: FormAppointmentProps) {
     const [selectedDate, setSelectedDate] = useState("");
+    const [availableHours, setAvailableHours] = useState<string[]>([]); // Estado para las horas disponibles
+    const [dataToCreateHour, setDataToCreateHour] = useState({
+        id_barbero: 1,
+        id_servicio: 0,
+        fecha: "",
+    });
 
-    const finalDate = () => {
-        const formattedDate = formatDate(selectedDate); // Formatear la fecha
-        console.log(formattedDate);
-        // Concatenar la fecha formateada con la hora seleccionada
-    };
-
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    // Función manejadora para el evento onChange de la fecha
+    const handleChangeDate = (e: ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault();
         setSelectedDate(e.target.value);
+        setDataToCreateHour((prev) => ({
+            ...prev,
+            fecha: e.target.value,
+        }));
     };
 
-    // Función manejadora para el evento onChange
-    const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {
-        console.log(e.target.value);
+    // Función manejadora para el evento onChange de servicios
+    const handleSelectChangeServices = (e: ChangeEvent<HTMLSelectElement>) => {
+        const serviceId = parseInt(e.target.value);
+        setDataToCreateHour((prev) => ({
+            ...prev,
+            id_servicio: serviceId,
+        }));
     };
 
-    // Extraccion de clientes
+    // Extracción de clientes
     const { data: clients, isLoading: isLoadingClients } = useQuery<Client[]>({
-        queryKey: ["clients-list"],
+        queryKey: ["clients"],
         queryFn: getClients,
     });
 
@@ -42,10 +52,25 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
         queryFn: getServices,
     });
 
+    // Obtener las horas disponibles
+    const { mutate, isSuccess } = useMutation({
+        mutationKey: ["hours"],
+        mutationFn: createValidHour,
+        onSuccess: (data: AvailableHours) => {
+            setAvailableHours(data.available_slots);
+        },
+    });
+
+    useEffect(() => {
+        if (dataToCreateHour.id_servicio > 0 && dataToCreateHour.fecha) {
+            mutate(dataToCreateHour); // Se invoca solo cuando se tiene que mutar, pero no causa recarga
+        }
+    }, [dataToCreateHour, mutate]);
+
     // Ordenar los clientes alfabéticamente por nombre
     const sortedClients = clients?.slice().sort((a, b) => {
         const nameA = `${a.nombre} ${a.apellido_paterno} ${a.apellido_materno}`.toLowerCase();
-        const nameB = `${b.nombre} ${b.apellido_paterno} ${b.apellido_materno}`.toLowerCase();
+        const nameB = `${b.nombre} ${b.apellido_paterno} ${a.apellido_materno}`.toLowerCase();
         return nameA.localeCompare(nameB);
     });
 
@@ -61,8 +86,9 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
                     className="block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:border-transparent text-black cursor-pointer"
                     {...register("id_cliente", {
                         required: "Debe seleccionar un cliente",
+                        validate: (value) =>
+                            value.toString() !== "0" || "Debe seleccionar un cliente",
                     })}
-                    onChange={handleSelectChange} // Maneja el valor de cada option (id del cliente)
                 >
                     {isLoadingClients ? (
                         <option disabled value="0">
@@ -73,15 +99,12 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
                             --- Seleccionar Cliente --
                         </option>
                     )}
-
-                    {/* Aquí va el map de opciones */}
                     {sortedClients?.map((client) => (
                         <option key={client.id_cliente} value={client.id_cliente}>
                             {client.nombre} {client.apellido_paterno} {client.apellido_materno}
                         </option>
                     ))}
                 </select>
-
                 {errors.id_cliente && <ErrorMessage>{errors.id_cliente.message}</ErrorMessage>}
             </div>
             <div className="space-y-3 mb-5 flex flex-col">
@@ -90,10 +113,14 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
                 </label>
                 <select
                     id="id_servicio"
+                    defaultValue="0"
                     className="block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:border-transparent text-black cursor-pointer"
                     {...register("id_servicio", {
                         required: "Debe seleccionar un servicio",
+                        validate: (value) =>
+                            value.toString() !== "0" || "Debe seleccionar un servicio",
                     })}
+                    onChange={handleSelectChangeServices}
                 >
                     {isLoadingServices ? (
                         <option disabled value="0">
@@ -104,7 +131,6 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
                             --- Seleccionar Servicio --
                         </option>
                     )}
-                    {/* Aquí va el map de servicio */}
                     {services?.map((service) => (
                         <option key={service.id_servicio} value={service.id_servicio}>
                             {service.nombre}
@@ -122,12 +148,11 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
                     id="fecha_inicio"
                     className="block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:border-transparent text-black cursor-pointer"
                     {...register("fecha_inicio", {
-                        required: "La fecha de cita es obligatoria",
+                        required: "Debe seleccionar una fecha disponible",
                     })}
-                    onChange={handleChange}
+                    onChange={handleChangeDate}
                     value={selectedDate}
                 />
-
                 {errors.fecha_inicio && <ErrorMessage>{errors.fecha_inicio.message}</ErrorMessage>}
             </div>
             <div className="space-y-3 mb-5 flex flex-col">
@@ -136,15 +161,20 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
                 </label>
                 <select
                     id="hora_inicio"
+                    disabled={!isSuccess}
                     className="block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:border-transparent text-black cursor-pointer"
                     {...register("hora_inicio", {
                         required: "Debe seleccionar una hora disponible",
+                        validate: (value) =>
+                            value?.toString() !== "0" || "Debe seleccionar una hora",
                     })}
                 >
-                    <option disabled value="">
-                        --- Seleccionar Hora --
-                    </option>
                     {/* Aquí va el map de horas */}
+                    {availableHours?.map((hour, index) => (
+                        <option key={index} value={hour}>
+                            {hour}
+                        </option>
+                    ))}
                 </select>
                 {errors.hora_inicio && <ErrorMessage>{errors.hora_inicio.message}</ErrorMessage>}
             </div>
