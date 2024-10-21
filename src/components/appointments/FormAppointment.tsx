@@ -1,9 +1,10 @@
 import { ChangeEvent, useState } from "react";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { formatDate } from "../../utils/formatDate";
-import { AppointmentFormData, Client } from "../../types";
+import { AppointmentFormData, Client, Service } from "../../types";
 import { getClients } from "../../api/ClientAPI";
 import { useQuery } from "@tanstack/react-query";
+import { getServices } from "../../api/ServicesAPI";
 import ErrorMessage from "../ErrorMessage";
 
 type FormAppointmentProps = {
@@ -33,6 +34,12 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
     const { data: clients, isLoading: isLoadingClients } = useQuery<Client[]>({
         queryKey: ["clients-list"],
         queryFn: getClients,
+    });
+
+    // Obtener los servicios
+    const { data: services, isLoading: isLoadingServices } = useQuery<Service[]>({
+        queryKey: ["services", "all"],
+        queryFn: getServices,
     });
 
     // Ordenar los clientes alfabéticamente por nombre
@@ -88,10 +95,21 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
                         required: "Debe seleccionar un servicio",
                     })}
                 >
-                    <option disabled value="">
-                        --- Seleccionar Servicio --
-                    </option>
+                    {isLoadingServices ? (
+                        <option disabled value="0">
+                            Cargando servicios...
+                        </option>
+                    ) : (
+                        <option disabled value="0">
+                            --- Seleccionar Servicio --
+                        </option>
+                    )}
                     {/* Aquí va el map de servicio */}
+                    {services?.map((service) => (
+                        <option key={service.id_servicio} value={service.id_servicio}>
+                            {service.nombre}
+                        </option>
+                    ))}
                 </select>
                 {errors.id_servicio && <ErrorMessage>{errors.id_servicio.message}</ErrorMessage>}
             </div>

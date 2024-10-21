@@ -53,11 +53,11 @@ export default function Schedule() {
         citas?.map((cita) => ({
             id: cita.id_cita,
             title: `Cita con ${clientMap[cita.id_cliente] || "Cliente Desconocido"}`,
-            start: new Date(cita.fecha_inicio),
-            end: new Date(cita.fecha_finalizacion),
+            start: moment.utc(cita.fecha_inicio).add(6, "hours").toDate(), // Sumar 6 horas
+            end: moment.utc(cita.fecha_finalizacion).add(6, "hours").toDate(), // Sumar 6 horas
             cliente: clientMap[cita.id_cliente] || "Cliente Desconocido",
             hora_inicio: cita.fecha_inicio,
-            servicio: serviceMap[cita.id_servicio] || "Servicio Desconocido", // Cambia aquí
+            servicio: serviceMap[cita.id_servicio] || "Servicio Desconocido",
         })) || ([] as AppointmentFormData[]);
 
     // Función para abrir el modal cuando se hace clic en un evento
