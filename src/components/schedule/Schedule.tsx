@@ -1,7 +1,7 @@
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { getAppointments } from "../../api/AppointmentAPI";
+import { getAppointmentsFilter } from "../../api/AppointmentAPI";
 import { getClients } from "../../api/ClientAPI";
 import { Appointment, AppointmentFormData, Client, Service } from "../../types";
 import { getServices } from "../../api/ServicesAPI";
@@ -20,10 +20,10 @@ export default function Schedule() {
 
     // EN TODAS ESTAS SE LES DEBE PONER EL ID DEL BARBERO
 
-    // Obtener las citas
+    // Obtener las citas por barbero * cambiar el 1 por no estatico *
     const { data: citas } = useQuery<Appointment[]>({
-        queryKey: ["appointment"],
-        queryFn: getAppointments,
+        queryKey: ["appointmentFilter"],
+        queryFn: () => getAppointmentsFilter(1),
     });
 
     // Obtener los clientes
