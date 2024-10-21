@@ -14,6 +14,7 @@ export const appointmentSchema = z.object({
 export type Appointment = z.infer<typeof appointmentSchema>;
 
 export type AppointmentFormData = {
+    id_barbero?: Appointment["id_barbero"];
     id_cliente: Appointment["id_cliente"];
     id_servicio: Appointment["id_servicio"];
     fecha_inicio: string;

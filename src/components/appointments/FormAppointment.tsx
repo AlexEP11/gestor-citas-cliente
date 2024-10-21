@@ -165,8 +165,6 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
                     className="block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:border-transparent text-black cursor-pointer"
                     {...register("hora_inicio", {
                         required: "Debe seleccionar una hora disponible",
-                        validate: (value) =>
-                            value?.toString() !== "0" || "Debe seleccionar una hora",
                     })}
                 >
                     {/* Aquí va el map de horas */}

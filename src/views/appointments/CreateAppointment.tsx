@@ -2,9 +2,13 @@ import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import FormAppointment from "../../components/appointments/FormAppointment";
 import { AppointmentFormData } from "../../types";
+import { useMutation } from "@tanstack/react-query";
+import { createAppointment } from "../../api/AppointmentAPI";
+import { toast } from "react-toastify";
 
 export default function CreateAppointment() {
     const initialValues: AppointmentFormData = {
+        id_barbero: 1, // Cambiar dinamicamente
         id_cliente: 0,
         id_servicio: 0,
         fecha_inicio: "",
@@ -16,10 +20,24 @@ export default function CreateAppointment() {
         register,
         handleSubmit,
         formState: { errors },
+        reset,
     } = useForm({ defaultValues: initialValues });
 
+    const { mutate } = useMutation({
+        mutationKey: ["createAppointment"],
+        mutationFn: createAppointment,
+        onSuccess: (data) => {
+            toast.success(data.message);
+            reset();
+        },
+        onError: (error) => {
+            toast.error(error.message);
+        },
+    });
+
     const handleForm = (data: AppointmentFormData) => {
-        console.log(data);
+        const dataFinal = { ...data, fecha_inicio: `${data.fecha_inicio} ${data.hora_inicio}` };
+        mutate(dataFinal);
     };
 
     return (
