@@ -1,10 +1,11 @@
-import { useEffect, MouseEvent, useState } from "react"; // Importar useState
+import { useEffect, MouseEvent, useState } from "react";
 import ReactDOM from "react-dom";
 import { formatearHora } from "../../utils/formatDate";
 import { Appointment } from "../../types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { cancelAppointment } from "../../api/AppointmentAPI";
+import { cancelAppointment, rescheduleAppointment } from "../../api/AppointmentAPI";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 type ScheduleModalProps = {
     isOpen: boolean;
@@ -20,50 +21,74 @@ type ScheduleModalProps = {
 export default function ScheduleModal({ isOpen, onClose, cita, citaId }: ScheduleModalProps) {
     const modalRoot = document.getElementById("modal-root");
 
-    // Efecto para manejar el scroll del body
+    const navigate = useNavigate();
+
     useEffect(() => {
-        document.body.style.overflow = isOpen ? "hidden" : "unset"; // Deshabilitar el scroll
+        document.body.style.overflow = isOpen ? "hidden" : "unset";
 
         return () => {
             document.body.style.overflow = "unset";
         };
     }, [isOpen]);
 
-    // Estado para controlar la carga
-    const [isSubmitting, setIsSubmitting] = useState(false); // Agregar estado
+    const [isRescheduling, setIsRescheduling] = useState(false);
+    const [isCancelling, setIsCancelling] = useState(false);
 
-    // Mutación para cancelar la cita
-    const queryClient = useQueryClient(); // Obtener el Query Client
+    const queryClient = useQueryClient();
 
-    const { mutate } = useMutation({
+    const { mutate: rescheduleAppointmentMutate } = useMutation({
+        mutationKey: ["rescheduleAppointment"],
+        mutationFn: () => rescheduleAppointment(citaId),
+        onSuccess: () => {
+            toast.info("Reagende la cita llenando el formulario");
+            onClose();
+            queryClient.invalidateQueries({
+                queryKey: ["appointmentFilter"],
+                exact: true,
+            });
+            setIsRescheduling(false);
+        },
+        onError: () => {
+            toast.error("Ocurrió un error al reagendar la cita");
+            setIsRescheduling(false);
+        },
+    });
+
+    const { mutate: cancelAppointmentMutate } = useMutation({
         mutationKey: ["cancelAppointment"],
         mutationFn: () => cancelAppointment(citaId),
         onSuccess: () => {
             toast.success("Cita cancelada correctamente");
-            onClose(); // Cerrar el modal
+            onClose();
             queryClient.invalidateQueries({
                 queryKey: ["appointmentFilter"],
-                exact: true, // Opcional: Para invalidar solo si la clave coincide exactamente
+                exact: true,
             });
-            setIsSubmitting(false); // Restablecer el estado después de la mutación
+            setIsCancelling(false);
         },
         onError: () => {
             toast.error("Ocurrió un error al cancelar la cita");
-            setIsSubmitting(false); // Restablecer el estado en caso de error
+            setIsCancelling(false);
         },
     });
 
-    if (!isOpen || !modalRoot) return null; // Verifica si está abierto y si modalRoot existe
+    if (!isOpen || !modalRoot) return null;
 
     const handleBackdropClick = (e: MouseEvent<HTMLDivElement>) => {
         if (e.target === e.currentTarget) {
-            onClose(); // Cerrar el modal
+            onClose();
         }
     };
 
+    const handleClickReschedule = async () => {
+        setIsRescheduling(true);
+        rescheduleAppointmentMutate();
+        navigate("/citas/agendar"); // Cambiar a navigate para redirigir
+    };
+
     const handleClickCancel = () => {
-        setIsSubmitting(true); // Establecer el estado a verdadero al cancelar
-        mutate(); // Cancelar la cita
+        setIsCancelling(true);
+        cancelAppointmentMutate();
     };
 
     return ReactDOM.createPortal(
@@ -85,7 +110,7 @@ export default function ScheduleModal({ isOpen, onClose, cita, citaId }: Schedul
                             type="text"
                             id="cliente"
                             className="block w-full px-4 py-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm focus:border-transparent text-black cursor-pointer"
-                            value={cita?.cliente} // Aquí se usa el nombre del cliente
+                            value={cita?.cliente}
                             disabled
                         />
                     </div>
@@ -118,17 +143,23 @@ export default function ScheduleModal({ isOpen, onClose, cita, citaId }: Schedul
                 </div>
 
                 <div className="mt-10 flex justify-end gap-8">
-                    <button className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600">
-                        Posponer Cita
+                    <button
+                        className={`px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 ${
+                            isRescheduling ? "bg-yellow-400 cursor-not-allowed" : ""
+                        }`}
+                        onClick={handleClickReschedule}
+                        disabled={isRescheduling}
+                    >
+                        {isRescheduling ? "Reagendando..." : "Reagendar Cita"}
                     </button>
                     <button
                         className={`px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 ${
-                            isSubmitting ? "bg-red-400 cursor-not-allowed" : ""
+                            isCancelling ? "bg-red-400 cursor-not-allowed" : ""
                         }`}
                         onClick={handleClickCancel}
-                        disabled={isSubmitting} // Deshabilitar el botón si se está enviando
+                        disabled={isCancelling}
                     >
-                        {isSubmitting ? "Cancelando..." : "Cancelar Cita"}
+                        {isCancelling ? "Cancelando..." : "Cancelar Cita"}
                     </button>
                 </div>
             </div>
