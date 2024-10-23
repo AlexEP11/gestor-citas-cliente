@@ -74,6 +74,15 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
         return nameA.localeCompare(nameB);
     });
 
+    // Obtener la fecha actual en formato YYYY-MM-DD
+    const getCurrentDate = () => {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = (today.getMonth() + 1).toString().padStart(2, "0");
+        const day = today.getDate().toString().padStart(2, "0");
+        return `${year}-${month}-${day}`;
+    };
+
     return (
         <>
             <div className="space-y-3 mb-5 flex flex-col">
@@ -96,7 +105,7 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
                         </option>
                     ) : (
                         <option disabled value="0">
-                            --- Seleccionar Cliente --
+                            --- Seleccionar Cliente ---
                         </option>
                     )}
                     {sortedClients?.map((client) => (
@@ -128,7 +137,7 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
                         </option>
                     ) : (
                         <option disabled value="0">
-                            --- Seleccionar Servicio --
+                            --- Seleccionar Servicio ---
                         </option>
                     )}
                     {services?.map((service) => (
@@ -149,6 +158,8 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
                     className="block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:border-transparent text-black cursor-pointer"
                     {...register("fecha_inicio", {
                         required: "Debe seleccionar una fecha disponible",
+                        validate: (value) =>
+                            value >= getCurrentDate() || "La fecha no puede ser en el pasado",
                     })}
                     onChange={handleChangeDate}
                     value={selectedDate}
