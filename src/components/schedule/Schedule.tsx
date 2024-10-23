@@ -14,56 +14,93 @@ export default function Schedule() {
     const isMobile = window.innerWidth < 768;
     const localizer = momentLocalizer(moment);
 
-    // Estado para controlar el modal y la cita seleccionada
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedCita, setSelectedCita] = useState<AppointmentFormDataSchedule | null>(null);
 
-    // EN TODAS ESTAS SE LES DEBE PONER EL ID DEL BARBERO
-
-    // Obtener las citas por barbero * cambiar el 1 por no estatico *
     const { data: citas } = useQuery<Appointment[]>({
         queryKey: ["appointmentFilter"],
         queryFn: () => getAppointmentsFilter(1),
     });
 
-    // Obtener los clientes
     const { data: clients } = useQuery<Client[]>({
         queryKey: ["clients"],
         queryFn: getClients,
     });
 
-    // Obtener los servicios
     const { data: services } = useQuery<Service[]>({
         queryKey: ["services", "all"],
         queryFn: getServices,
     });
 
-    // Crear un mapa de clientes para acceso rápido
+    // Crear un mapa de clientes que incluye nombre y apellido
     const clientMap = clients
-        ? Object.fromEntries(clients.map((client) => [client.id_cliente, client.nombre]))
+        ? Object.fromEntries(
+              clients.map((client) => [
+                  client.id_cliente,
+                  `${client.nombre} ${client.apellido_paterno}`,
+              ])
+          )
         : {};
 
-    // Crear un mapa de servicios para acceso rápido
     const serviceMap = services
         ? Object.fromEntries(services.map((service) => [service.id_servicio, service.nombre]))
         : {};
 
-    // Crear eventos con nombres de clientes
     const events =
         citas?.map((cita) => ({
             id: cita.id_cita,
             title: `Cita con ${clientMap[cita.id_cliente] || "Cliente Desconocido"}`,
-            start: moment.utc(cita.fecha_inicio).add(6, "hours").toDate(), // Sumar 6 horas
-            end: moment.utc(cita.fecha_finalizacion).add(6, "hours").toDate(), // Sumar 6 horas
+            start: moment.utc(cita.fecha_inicio).add(6, "hours").toDate(),
+            end: moment.utc(cita.fecha_finalizacion).add(6, "hours").toDate(),
             cliente: clientMap[cita.id_cliente] || "Cliente Desconocido",
             hora_inicio: cita.fecha_inicio,
             servicio: serviceMap[cita.id_servicio] || "Servicio Desconocido",
+            id_estado: cita.id_estado,
         })) || ([] as AppointmentFormDataSchedule[]);
 
-    // Función para abrir el modal cuando se hace clic en un evento
     const handleSelectEvent = (e: AppointmentFormDataSchedule) => {
-        setSelectedCita(e); // Guardar la cita seleccionada
-        setModalOpen(true); // Abrir el modal
+        setSelectedCita(e);
+        setModalOpen(true);
+    };
+
+    const eventStyleGetter = (event: AppointmentFormDataSchedule) => {
+        let backgroundColor = "";
+
+        if (event.id_estado === 1) {
+            backgroundColor = "#3f72af"; // Color verde para estado 1
+        } else if (event.id_estado === 7) {
+            backgroundColor = "#b8c7d7"; // Color gris para estado 7
+        }
+
+        const style = {
+            backgroundColor,
+            borderRadius: "5px",
+            opacity: 1,
+            color: "black",
+            fontWeight: 600,
+            cursor: "pointer",
+        };
+
+        return {
+            style,
+        };
+    };
+
+    // Función para aplicar estilos a las casillas del calendario
+    const dayPropGetter = (date: Date) => {
+        const today = new Date();
+        if (
+            date.getFullYear() === today.getFullYear() &&
+            date.getMonth() === today.getMonth() &&
+            date.getDate() === today.getDate()
+        ) {
+            return {
+                style: {
+                    backgroundColor: "white", // Cambia a tu color deseado
+                },
+            };
+        }
+        return {};
     };
 
     return (
@@ -98,6 +135,8 @@ export default function Schedule() {
                             ? moment(date).format("dd").toUpperCase()
                             : moment(date).format("dddd").toUpperCase(),
                 }}
+                eventPropGetter={eventStyleGetter} // Aquí se asignan los estilos a los eventos
+                dayPropGetter={dayPropGetter} // Aquí se asignan los estilos a los días
             />
 
             {/* Modal para mostrar los detalles de la cita */}
@@ -105,11 +144,11 @@ export default function Schedule() {
                 isOpen={modalOpen}
                 onClose={() => setModalOpen(false)}
                 cita={{
-                    cliente: String(selectedCita?.cliente) || "", // Convertir a string
-                    hora_inicio: new Date(selectedCita?.hora_inicio!) || new Date(), // Usar aserción no nula
-                    servicio: selectedCita?.servicio || 0, // Asignar un valor por defecto
+                    cliente: String(selectedCita?.cliente) || "",
+                    hora_inicio: new Date(selectedCita?.hora_inicio!) || new Date(),
+                    servicio: selectedCita?.servicio || 0,
                 }}
-                citaId={selectedCita?.id || 0} // Asignar un valor por defecto
+                citaId={selectedCita?.id || 0}
             />
         </>
     );
