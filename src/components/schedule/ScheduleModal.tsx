@@ -1,11 +1,11 @@
 import { useEffect, MouseEvent, useState } from "react";
 import ReactDOM from "react-dom";
-import { formatearHora } from "../../utils/formatDate";
 import { Appointment } from "../../types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { cancelAppointment, rescheduleAppointment } from "../../api/AppointmentAPI";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 type ScheduleModalProps = {
     isOpen: boolean;
@@ -123,7 +123,7 @@ export default function ScheduleModal({ isOpen, onClose, cita, citaId }: Schedul
                             type="text"
                             id="hora"
                             className="block w-full px-4 py-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm focus:border-transparent text-black cursor-pointer"
-                            value={formatearHora(new Date(cita?.hora_inicio))}
+                            value={moment(new Date(cita?.hora_inicio)).format("HH:mm A")}
                             disabled
                         />
                     </div>

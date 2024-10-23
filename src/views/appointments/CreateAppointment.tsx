@@ -90,7 +90,7 @@ export default function CreateAppointment() {
                         className={`w-full p-3 font-bold text-white uppercase rounded-md cursor-pointer mt-3 transition-colors ${
                             isSubmitting
                                 ? "bg-gray-400 cursor-not-allowed"
-                                : "bg-bronze_earth hover:bg-[#473c2f]"
+                                : "bg-bronze_earth hover:bg-black"
                         }`}
                         value={isSubmitting ? "Registrando..." : "Registrar Cita"}
                         disabled={isSubmitting} // Deshabilitar el botón si se está enviando

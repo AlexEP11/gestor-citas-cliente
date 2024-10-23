@@ -50,8 +50,8 @@ export default function Schedule() {
         citas?.map((cita) => ({
             id: cita.id_cita,
             title: `Cita con ${clientMap[cita.id_cliente] || "Cliente Desconocido"}`,
-            start: moment.utc(cita.fecha_inicio).add(6, "hours").toDate(),
-            end: moment.utc(cita.fecha_finalizacion).add(6, "hours").toDate(),
+            start: moment(cita.fecha_inicio),
+            end: moment(cita.fecha_finalizacion),
             cliente: clientMap[cita.id_cliente] || "Cliente Desconocido",
             hora_inicio: cita.fecha_inicio,
             servicio: serviceMap[cita.id_servicio] || "Servicio Desconocido",
@@ -79,6 +79,7 @@ export default function Schedule() {
             color: "black",
             fontWeight: 600,
             cursor: "pointer",
+            border: "none",
         };
 
         return {
@@ -114,7 +115,7 @@ export default function Schedule() {
                 startAccessor="start"
                 endAccessor="end"
                 style={{ height: 500 }}
-                className="bg-ivory_sand text-black p-4 rounded-lg shadow-lg"
+                className="bg-ivory_sand text-black p-4 rounded-lg shadow-2xl"
                 messages={{
                     next: "Siguiente",
                     previous: "Anterior",

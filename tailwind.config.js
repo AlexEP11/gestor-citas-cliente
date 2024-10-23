@@ -4,12 +4,12 @@ export default {
     theme: {
         extend: {
             colors: {
-                ebony_black: "#0A0908", // Negro ébano
-                deep_teal: "#22333B", // Verde azulado profundo
-                steelGray: "#394F58", // Verde azulado claro
-                ivory_sand: "#EAE0D5", // Marfil arena
-                desert_tan: "#C6AC8F", // Bronceado desértico
-                bronze_earth: "#5E503F", // Tierra bronceada
+                ebony_black: "#171717", // Negro ébano
+                deep_teal: "#ab002b", // Verde azulado profundo
+                steelGray: "#DA0037", // Verde azulado claro
+                ivory_sand: "#bbbbbb", // Marfil arena
+                desert_tan: "#EDEDED", // Bronceado desértico
+                bronze_earth: "#171717", // Tierra bronceada
             },
             fontFamily: {
                 outfit: ['"Outfit"', "serif"],
