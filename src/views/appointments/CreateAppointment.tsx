@@ -5,10 +5,11 @@ import { AppointmentFormData } from "../../types";
 import { useMutation } from "@tanstack/react-query";
 import { createAppointment } from "../../api/AppointmentAPI";
 import { toast } from "react-toastify";
+import { useState } from "react"; // Importar useState
 
 export default function CreateAppointment() {
     const initialValues: AppointmentFormData = {
-        id_barbero: 1, // Cambiar dinamicamente
+        id_barbero: 1, // Cambiar dinámicamente
         id_cliente: 0,
         id_servicio: 0,
         fecha_inicio: "",
@@ -21,7 +22,12 @@ export default function CreateAppointment() {
         handleSubmit,
         formState: { errors },
         reset,
+        trigger,
+        clearErrors,
     } = useForm({ defaultValues: initialValues });
+
+    // Estado para controlar la carga
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { mutate } = useMutation({
         mutationKey: ["createAppointment"],
@@ -29,14 +35,17 @@ export default function CreateAppointment() {
         onSuccess: (data) => {
             toast.success(data.message);
             reset();
+            setIsSubmitting(false); // Restablecer el estado después de la mutación
         },
-        onError: (error) => {
-            toast.error(error.message);
+        onError: () => {
+            toast.error("Ocurrió un error al registrar la cita");
+            setIsSubmitting(false); // Restablecer el estado en caso de error
         },
     });
 
     const handleForm = (data: AppointmentFormData) => {
         const dataFinal = { ...data, fecha_inicio: `${data.fecha_inicio} ${data.hora_inicio}` };
+        setIsSubmitting(true); // Establecer el estado a verdadero al enviar el formulario
         mutate(dataFinal);
     };
 
@@ -64,12 +73,22 @@ export default function CreateAppointment() {
                     noValidate
                     onSubmit={handleSubmit(handleForm)}
                 >
-                    <FormAppointment register={register} errors={errors} />
+                    <FormAppointment
+                        register={register}
+                        errors={errors}
+                        trigger={trigger}
+                        clearErrors={clearErrors}
+                    />
 
                     <input
                         type="submit"
-                        className="w-full bg-bronze_earth p-3 font-bold text-white uppercase rounded-md cursor-pointer mt-3 hover:bg-[#473c2f] transition-colors"
-                        value="Registrar Cita"
+                        className={`w-full p-3 font-bold text-white uppercase rounded-md cursor-pointer mt-3 transition-colors ${
+                            isSubmitting
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : "bg-bronze_earth hover:bg-[#473c2f]"
+                        }`}
+                        value={isSubmitting ? "Registrando..." : "Registrar Cita"}
+                        disabled={isSubmitting} // Deshabilitar el botón si se está enviando
                     />
                 </form>
             </div>

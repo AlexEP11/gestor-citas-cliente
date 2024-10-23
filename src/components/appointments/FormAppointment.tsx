@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { FieldErrors, UseFormRegister } from "react-hook-form";
+import { FieldErrors, UseFormClearErrors, UseFormRegister, UseFormTrigger } from "react-hook-form";
 import { AppointmentFormData, AvailableHours, Client, Service } from "../../types";
 import { getClients } from "../../api/ClientAPI";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -10,9 +10,16 @@ import ErrorMessage from "../ErrorMessage";
 type FormAppointmentProps = {
     register: UseFormRegister<AppointmentFormData>;
     errors: FieldErrors<AppointmentFormData>;
+    trigger: UseFormTrigger<AppointmentFormData>;
+    clearErrors: UseFormClearErrors<AppointmentFormData>;
 };
 
-export default function FormAppointment({ register, errors }: FormAppointmentProps) {
+export default function FormAppointment({
+    register,
+    errors,
+    trigger,
+    clearErrors,
+}: FormAppointmentProps) {
     const [selectedDate, setSelectedDate] = useState("");
     const [availableHours, setAvailableHours] = useState<string[]>([]); // Estado para las horas disponibles
     const [dataToCreateHour, setDataToCreateHour] = useState({
@@ -22,12 +29,13 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
     });
 
     // Función manejadora para el evento onChange de la fecha
-    const handleChangeDate = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleChangeDate = async (e: ChangeEvent<HTMLInputElement>) => {
         e.preventDefault();
-        setSelectedDate(e.target.value);
+        const newDate = e.target.value;
+        setSelectedDate(newDate);
         setDataToCreateHour((prev) => ({
             ...prev,
-            fecha: e.target.value,
+            fecha: newDate,
         }));
     };
 
@@ -38,6 +46,7 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
             ...prev,
             id_servicio: serviceId,
         }));
+        clearErrors("id_servicio");
     };
 
     // Extracción de clientes
@@ -58,6 +67,10 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
         mutationFn: createValidHour,
         onSuccess: (data: AvailableHours) => {
             setAvailableHours(data.available_slots);
+            clearErrors(["fecha_inicio", "hora_inicio"]);
+        },
+        onError: () => {
+            trigger("fecha_inicio");
         },
     });
 
@@ -155,11 +168,11 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
                 <input
                     type="date"
                     id="fecha_inicio"
+                    onKeyDown={(e) => e.preventDefault()}
+                    min={getCurrentDate()}
                     className="block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:border-transparent text-black cursor-pointer"
                     {...register("fecha_inicio", {
-                        required: "Debe seleccionar una fecha disponible",
-                        validate: (value) =>
-                            value >= getCurrentDate() || "La fecha no puede ser en el pasado",
+                        required: "Debes seleccionar una fecha valida",
                     })}
                     onChange={handleChangeDate}
                     value={selectedDate}
@@ -176,9 +189,13 @@ export default function FormAppointment({ register, errors }: FormAppointmentPro
                     className="block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:border-transparent text-black cursor-pointer"
                     {...register("hora_inicio", {
                         required: "Debe seleccionar una hora disponible",
+                        validate: (value) => value !== "" || "Debe seleccionar una hora disponible", // Verifica si el valor no está vacío
                     })}
                 >
-                    {/* Aquí va el map de horas */}
+                    <option value="" disabled>
+                        --- Seleccionar Hora ---
+                    </option>{" "}
+                    {/* Opción por defecto */}
                     {availableHours?.map((hour, index) => (
                         <option key={index} value={hour}>
                             {hour}

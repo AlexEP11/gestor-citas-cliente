@@ -22,6 +22,7 @@ export type AppointmentFormData = {
 };
 
 export type AppointmentFormDataSchedule = {
+    id: Appointment["id_cita"]; // ID de la cita
     cliente: Appointment["id_cliente"]; // ID del cliente
     hora_inicio: Appointment["fecha_inicio"]; // Fecha y hora de inicio
     servicio: Appointment["id_servicio"]; // ID del servicio

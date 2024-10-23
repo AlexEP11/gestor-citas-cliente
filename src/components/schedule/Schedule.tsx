@@ -5,7 +5,7 @@ import { getAppointmentsFilter } from "../../api/AppointmentAPI";
 import { getClients } from "../../api/ClientAPI";
 import { Appointment, AppointmentFormDataSchedule, Client, Service } from "../../types";
 import { getServices } from "../../api/ServicesAPI";
-import ScheduleModal from "./ScheduleModa";
+import ScheduleModal from "./ScheduleModal";
 import moment from "moment/moment";
 import "moment/locale/es";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -109,6 +109,7 @@ export default function Schedule() {
                     hora_inicio: new Date(selectedCita?.hora_inicio!) || new Date(), // Usar aserción no nula
                     servicio: selectedCita?.servicio || 0, // Asignar un valor por defecto
                 }}
+                citaId={selectedCita?.id || 0} // Asignar un valor por defecto
             />
         </>
     );

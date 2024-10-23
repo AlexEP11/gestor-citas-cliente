@@ -1,7 +1,10 @@
-import { useEffect, MouseEvent } from "react";
+import { useEffect, MouseEvent, useState } from "react"; // Importar useState
 import ReactDOM from "react-dom";
 import { formatearHora } from "../../utils/formatDate";
 import { Appointment } from "../../types";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { cancelAppointment } from "../../api/AppointmentAPI";
+import { toast } from "react-toastify";
 
 type ScheduleModalProps = {
     isOpen: boolean;
@@ -11,30 +14,56 @@ type ScheduleModalProps = {
         hora_inicio: Appointment["fecha_inicio"];
         servicio: Appointment["id_servicio"];
     };
+    citaId: Appointment["id_cita"];
 };
 
-export default function ScheduleModal({ isOpen, onClose, cita }: ScheduleModalProps) {
+export default function ScheduleModal({ isOpen, onClose, cita, citaId }: ScheduleModalProps) {
     const modalRoot = document.getElementById("modal-root");
 
     // Efecto para manejar el scroll del body
     useEffect(() => {
-        if (isOpen) {
-            document.body.style.overflow = "hidden"; // Deshabilitar el scroll
-        } else {
-            document.body.style.overflow = "unset"; // Habilitar el scroll
-        }
+        document.body.style.overflow = isOpen ? "hidden" : "unset"; // Deshabilitar el scroll
 
         return () => {
             document.body.style.overflow = "unset";
         };
     }, [isOpen]);
 
+    // Estado para controlar la carga
+    const [isSubmitting, setIsSubmitting] = useState(false); // Agregar estado
+
+    // Mutación para cancelar la cita
+    const queryClient = useQueryClient(); // Obtener el Query Client
+
+    const { mutate } = useMutation({
+        mutationKey: ["cancelAppointment"],
+        mutationFn: () => cancelAppointment(citaId),
+        onSuccess: () => {
+            toast.success("Cita cancelada correctamente");
+            onClose(); // Cerrar el modal
+            queryClient.invalidateQueries({
+                queryKey: ["appointmentFilter"],
+                exact: true, // Opcional: Para invalidar solo si la clave coincide exactamente
+            });
+            setIsSubmitting(false); // Restablecer el estado después de la mutación
+        },
+        onError: () => {
+            toast.error("Ocurrió un error al cancelar la cita");
+            setIsSubmitting(false); // Restablecer el estado en caso de error
+        },
+    });
+
     if (!isOpen || !modalRoot) return null; // Verifica si está abierto y si modalRoot existe
 
-    const handleBackdropClick = (e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>) => {
+    const handleBackdropClick = (e: MouseEvent<HTMLDivElement>) => {
         if (e.target === e.currentTarget) {
             onClose(); // Cerrar el modal
         }
+    };
+
+    const handleClickCancel = () => {
+        setIsSubmitting(true); // Establecer el estado a verdadero al cancelar
+        mutate(); // Cancelar la cita
     };
 
     return ReactDOM.createPortal(
@@ -92,8 +121,14 @@ export default function ScheduleModal({ isOpen, onClose, cita }: ScheduleModalPr
                     <button className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600">
                         Posponer Cita
                     </button>
-                    <button className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600">
-                        Cancelar Cita
+                    <button
+                        className={`px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 ${
+                            isSubmitting ? "bg-red-400 cursor-not-allowed" : ""
+                        }`}
+                        onClick={handleClickCancel}
+                        disabled={isSubmitting} // Deshabilitar el botón si se está enviando
+                    >
+                        {isSubmitting ? "Cancelando..." : "Cancelar Cita"}
                     </button>
                 </div>
             </div>
