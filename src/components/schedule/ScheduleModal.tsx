@@ -144,8 +144,8 @@ export default function ScheduleModal({ isOpen, onClose, cita, citaId }: Schedul
 
                 <div className="mt-10 flex justify-end gap-8">
                     <button
-                        className={`px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 ${
-                            isRescheduling ? "bg-yellow-400 cursor-not-allowed" : ""
+                        className={`px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 ${
+                            isRescheduling && "bg-yellow-300 cursor-not-allowed"
                         }`}
                         onClick={handleClickReschedule}
                         disabled={isRescheduling}
@@ -153,8 +153,8 @@ export default function ScheduleModal({ isOpen, onClose, cita, citaId }: Schedul
                         {isRescheduling ? "Reagendando..." : "Reagendar Cita"}
                     </button>
                     <button
-                        className={`px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 ${
-                            isCancelling ? "bg-red-400 cursor-not-allowed" : ""
+                        className={`px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 ${
+                            isCancelling && "bg-red-300 cursor-not-allowed"
                         }`}
                         onClick={handleClickCancel}
                         disabled={isCancelling}
