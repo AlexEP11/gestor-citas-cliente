@@ -40,7 +40,7 @@ export default function ScheduleModal({ isOpen, onClose, cita, citaId }: Schedul
         mutationKey: ["rescheduleAppointment"],
         mutationFn: () => rescheduleAppointment(citaId),
         onSuccess: () => {
-            toast.info("Reagende la cita llenando el formulario");
+            toast.info(`Reagende la cita de ${cita.cliente}`);
             onClose();
             queryClient.invalidateQueries({
                 queryKey: ["appointmentFilter"],

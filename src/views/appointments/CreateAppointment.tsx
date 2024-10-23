@@ -16,6 +16,8 @@ export default function CreateAppointment() {
         hora_inicio: "",
     };
 
+    const [resetStatesForm, setResetStatesForm] = useState(false); // Estado para reiniciar los estados del formulario
+
     // Hook de formulario para la cita
     const {
         register,
@@ -36,6 +38,7 @@ export default function CreateAppointment() {
             toast.success(data.message);
             reset();
             setIsSubmitting(false); // Restablecer el estado después de la mutación
+            setResetStatesForm(false); // Restablecer el estado para reiniciar los estados del formulario
         },
         onError: () => {
             toast.error("Ocurrió un error al registrar la cita");
@@ -46,6 +49,7 @@ export default function CreateAppointment() {
     const handleForm = (data: AppointmentFormData) => {
         const dataFinal = { ...data, fecha_inicio: `${data.fecha_inicio} ${data.hora_inicio}` };
         setIsSubmitting(true); // Establecer el estado a verdadero al enviar el formulario
+        setResetStatesForm(true); // Establecer el estado para reiniciar los estados del formulario
         mutate(dataFinal);
     };
 
@@ -78,6 +82,7 @@ export default function CreateAppointment() {
                         errors={errors}
                         trigger={trigger}
                         clearErrors={clearErrors}
+                        resetStatesForm={resetStatesForm}
                     />
 
                     <input

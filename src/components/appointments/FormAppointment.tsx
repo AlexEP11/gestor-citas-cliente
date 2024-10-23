@@ -8,17 +8,19 @@ import { createValidHour } from "../../api/HoursAPI";
 import ErrorMessage from "../ErrorMessage";
 
 type FormAppointmentProps = {
-    register: UseFormRegister<AppointmentFormData>;
     errors: FieldErrors<AppointmentFormData>;
+    register: UseFormRegister<AppointmentFormData>;
     trigger: UseFormTrigger<AppointmentFormData>;
     clearErrors: UseFormClearErrors<AppointmentFormData>;
+    resetStatesForm: boolean;
 };
 
 export default function FormAppointment({
-    register,
     errors,
+    register,
     trigger,
     clearErrors,
+    resetStatesForm,
 }: FormAppointmentProps) {
     const [selectedDate, setSelectedDate] = useState("");
     const [availableHours, setAvailableHours] = useState<string[]>([]); // Estado para las horas disponibles
@@ -27,6 +29,13 @@ export default function FormAppointment({
         id_servicio: 0,
         fecha: "",
     });
+
+    // Efecto para reiniciar el estado local cuando se resetea el formulario
+    useEffect(() => {
+        setSelectedDate(""); // Resetea la fecha
+        setAvailableHours([]); // Resetea las horas disponibles
+        setDataToCreateHour({ id_barbero: 1, id_servicio: 0, fecha: "" }); // Resetea los datos de la cita
+    }, [resetStatesForm]);
 
     // Función manejadora para el evento onChange de la fecha
     const handleChangeDate = async (e: ChangeEvent<HTMLInputElement>) => {

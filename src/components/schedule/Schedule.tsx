@@ -37,7 +37,7 @@ export default function Schedule() {
         ? Object.fromEntries(
               clients.map((client) => [
                   client.id_cliente,
-                  `${client.nombre} ${client.apellido_paterno}`,
+                  `${client.nombre} ${client.apellido_paterno} ${client.apellido_materno}`,
               ])
           )
         : {};
