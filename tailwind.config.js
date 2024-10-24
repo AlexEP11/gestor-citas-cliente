@@ -4,12 +4,12 @@ export default {
     theme: {
         extend: {
             colors: {
-                ebony_black: "#171717", // Negro ébano
-                deep_teal: "#ab002b", // Verde azulado profundo
-                steelGray: "#DA0037", // Verde azulado claro
-                ivory_sand: "#bbbbbb", // Marfil arena
-                desert_tan: "#EDEDED", // Bronceado desértico
-                bronze_earth: "#171717", // Tierra bronceada
+                ebony_black: "#171717",
+                deep_crimson: "#AB002B",
+                scarlet_red: "#DA0037",
+                silver_fog: "#bbbbbb",
+                light_sand_gray: "#EDEDED",
+                dark_earth: "#171717",
             },
             fontFamily: {
                 outfit: ['"Outfit"', "serif"],

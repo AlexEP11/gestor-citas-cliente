@@ -59,13 +59,13 @@ export default function CreateAppointment() {
                 <h1 className="text-5xl font-outfit font-extrabold text-charcoal">
                     Registrar Cita
                 </h1>
-                <p className="text-2xl mt-5 text-bronze_earth font-bold">
+                <p className="text-2xl mt-5 text-dark_earth font-bold">
                     Llena el siguiente formulario para registrar una cita
                 </p>
 
                 <nav className="mt-5 mb-10 flex flex-col md:flex-row justify-between gap-6">
                     <Link
-                        className="bg-steelGray hover:bg-deep_teal cursor-pointer px-10 py-3 rounded-md font-outfit text-white font-bold transition-colors text-center"
+                        className="bg-scarlet_red hover:bg-deep_crimson cursor-pointer px-10 py-3 rounded-md font-outfit text-white font-bold transition-colors text-center"
                         to="/"
                     >
                         Agenda de Citas
@@ -73,7 +73,7 @@ export default function CreateAppointment() {
                 </nav>
 
                 <form
-                    className="bg-ivory_sand shadow-md p-10 rounded-md mt-10"
+                    className="bg-silver_fog shadow-md p-10 rounded-md mt-10"
                     noValidate
                     onSubmit={handleSubmit(handleForm)}
                 >
@@ -90,7 +90,7 @@ export default function CreateAppointment() {
                         className={`w-full p-3 font-bold text-white uppercase rounded-md cursor-pointer mt-3 transition-colors ${
                             isSubmitting
                                 ? "bg-gray-400 cursor-not-allowed"
-                                : "bg-bronze_earth hover:bg-black"
+                                : "bg-dark_earth hover:bg-black"
                         }`}
                         value={isSubmitting ? "Registrando..." : "Registrar Cita"}
                         disabled={isSubmitting} // Deshabilitar el botón si se está enviando

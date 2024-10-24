@@ -96,7 +96,7 @@ export default function ScheduleModal({ isOpen, onClose, cita, citaId }: Schedul
             className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
             onClick={handleBackdropClick}
         >
-            <div className="bg-ivory_sand p-5 md:p-10 rounded-lg shadow-lg w-11/12 md:w-6/12 ">
+            <div className="bg-silver_fog p-5 md:p-10 rounded-lg shadow-lg w-11/12 md:w-6/12 ">
                 <h2 className="text-xl md:text-2xl font-extrabold text-center mb-4 font-outfit">
                     Detalles de la Cita
                 </h2>

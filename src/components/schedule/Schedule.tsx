@@ -1,10 +1,11 @@
 import { Calendar, momentLocalizer } from "react-big-calendar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getAppointmentsFilter } from "../../api/AppointmentAPI";
 import { getClients } from "../../api/ClientAPI";
 import { Appointment, AppointmentFormDataSchedule, Client, Service } from "../../types";
 import { getServices } from "../../api/ServicesAPI";
+import { toast } from "react-toastify";
 import ScheduleModal from "./ScheduleModal";
 import moment from "moment/moment";
 import "moment/locale/es";
@@ -17,10 +18,22 @@ export default function Schedule() {
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedCita, setSelectedCita] = useState<AppointmentFormDataSchedule | null>(null);
 
-    const { data: citas } = useQuery<Appointment[]>({
+    const { data: citas, isLoading } = useQuery<Appointment[]>({
         queryKey: ["appointmentFilter"],
         queryFn: () => getAppointmentsFilter(1),
     });
+
+    // Mostrar un toast cuando el estado sea 'isLoading'
+    useEffect(() => {
+        if (isLoading) {
+            toast.info("Para mas opciones, de clic en un evento de la agenda", {
+                autoClose: false,
+                hideProgressBar: false,
+                closeOnClick: true,
+                draggable: true,
+            });
+        }
+    }, [isLoading]); // Se ejecutará solo cuando 'isLoading' cambie
 
     const { data: clients } = useQuery<Client[]>({
         queryKey: ["clients"],
@@ -115,7 +128,7 @@ export default function Schedule() {
                 startAccessor="start"
                 endAccessor="end"
                 style={{ height: 500 }}
-                className="bg-ivory_sand text-black p-4 rounded-lg shadow-2xl"
+                className="bg-silver_fog text-black p-4 rounded-lg shadow-2xl"
                 messages={{
                     next: "Siguiente",
                     previous: "Anterior",
