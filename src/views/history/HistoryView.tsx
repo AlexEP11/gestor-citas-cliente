@@ -81,6 +81,8 @@ export default function HistoryView() {
         );
     };
 
+    const filteredAppointments = getFilteredAndSortedAppointments(filter);
+
     // Función para generar el PDF
     const generatePDF = (currentFilter: FilterOption) => {
         const sortedAppointments = getFilteredAndSortedAppointments(currentFilter);
@@ -131,10 +133,10 @@ export default function HistoryView() {
 
     // Función para manejar el clic en los botones y generar el PDF
     const handleButtonClick = (newFilter: "week" | "month" | "year") => {
-        // Primero, generamos el PDF con el filtro actual
-        generatePDF(newFilter);
-        // Luego, actualizamos el estado
+        // Actualizamos el estado
         setFilter(newFilter);
+        // Generamos el PDF con el filtro actual
+        generatePDF(newFilter);
     };
 
     return (
@@ -177,7 +179,7 @@ export default function HistoryView() {
                 </button>
             </div>
 
-            {appointments?.map((appointment) => (
+            {filteredAppointments?.map((appointment) => (
                 <HistoryCard
                     key={appointment.id_cita}
                     appointment={{
