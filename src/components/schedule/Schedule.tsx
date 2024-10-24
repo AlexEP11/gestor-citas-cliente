@@ -80,9 +80,13 @@ export default function Schedule() {
         let backgroundColor = "";
 
         if (event.id_estado === 1) {
-            backgroundColor = "#3f72af"; // Color verde para estado 1
+            backgroundColor = "#a569bd"; // Color morado para estado 1 Programada
         } else if (event.id_estado === 7) {
-            backgroundColor = "#b8c7d7"; // Color gris para estado 7
+            backgroundColor = "#5dade2"; // Color azul para estado 7 Pendiente
+        } else if (event.id_estado === 6) {
+            backgroundColor = "#58d68d "; // Color verde para estado 6 Completada
+        } else if (event.id_estado === 4) {
+            backgroundColor = "#99a3a4 "; // Color gris para estado 4 No asistió
         }
 
         const style = {
@@ -157,12 +161,13 @@ export default function Schedule() {
             <ScheduleModal
                 isOpen={modalOpen}
                 onClose={() => setModalOpen(false)}
+                citaId={selectedCita?.id || 0}
                 cita={{
                     cliente: String(selectedCita?.cliente) || "",
                     hora_inicio: new Date(selectedCita?.hora_inicio!) || new Date(),
                     servicio: selectedCita?.servicio || 0,
+                    id_estado: selectedCita?.id_estado || 0,
                 }}
-                citaId={selectedCita?.id || 0}
             />
         </>
     );

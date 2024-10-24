@@ -1,26 +1,31 @@
+import {
+    cancelAppointment,
+    completeAppointment,
+    missedAppointment,
+    rescheduleAppointment,
+} from "../../api/AppointmentAPI";
 import { useEffect, MouseEvent, useState } from "react";
-import ReactDOM from "react-dom";
 import { Appointment } from "../../types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { cancelAppointment, rescheduleAppointment } from "../../api/AppointmentAPI";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import ReactDOM from "react-dom";
 import moment from "moment";
 
 type ScheduleModalProps = {
     isOpen: boolean;
     onClose: () => void;
+    citaId: Appointment["id_cita"];
     cita: {
         cliente: string | number;
         hora_inicio: Appointment["fecha_inicio"];
         servicio: Appointment["id_servicio"];
+        id_estado: Appointment["id_estado"];
     };
-    citaId: Appointment["id_cita"];
 };
 
 export default function ScheduleModal({ isOpen, onClose, cita, citaId }: ScheduleModalProps) {
     const modalRoot = document.getElementById("modal-root");
-
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -31,11 +36,33 @@ export default function ScheduleModal({ isOpen, onClose, cita, citaId }: Schedul
         };
     }, [isOpen]);
 
+    const [isCompleting, setIsCompleting] = useState(false);
     const [isRescheduling, setIsRescheduling] = useState(false);
+    const [isMissing, setIsMissing] = useState(false);
     const [isCancelling, setIsCancelling] = useState(false);
 
     const queryClient = useQueryClient();
 
+    // Completa la cita
+    const { mutate: completeAppointmentMutate } = useMutation({
+        mutationKey: ["completeAppointment"],
+        mutationFn: () => completeAppointment(citaId),
+        onSuccess: () => {
+            toast.success("Cita completada correctamente");
+            onClose();
+            queryClient.invalidateQueries({
+                queryKey: ["appointmentFilter"],
+                exact: true,
+            });
+            setIsRescheduling(false);
+        },
+        onError: () => {
+            toast.error("Ocurrió un error al completar la cita");
+            setIsRescheduling(false);
+        },
+    });
+
+    // Reagenda la cita
     const { mutate: rescheduleAppointmentMutate } = useMutation({
         mutationKey: ["rescheduleAppointment"],
         mutationFn: () => rescheduleAppointment(citaId),
@@ -54,6 +81,26 @@ export default function ScheduleModal({ isOpen, onClose, cita, citaId }: Schedul
         },
     });
 
+    // Faltó a la cita
+    const { mutate: missedAppointmentMutate } = useMutation({
+        mutationKey: ["missedAppointment"],
+        mutationFn: () => missedAppointment(citaId),
+        onSuccess: () => {
+            toast.success(`Cita de ${cita.cliente} marcada como no asistida`);
+            onClose();
+            queryClient.invalidateQueries({
+                queryKey: ["appointmentFilter"],
+                exact: true,
+            });
+            setIsRescheduling(false);
+        },
+        onError: () => {
+            toast.error("Ocurrió un error al reagendar la cita");
+            setIsRescheduling(false);
+        },
+    });
+
+    // Cancela la cita
     const { mutate: cancelAppointmentMutate } = useMutation({
         mutationKey: ["cancelAppointment"],
         mutationFn: () => cancelAppointment(citaId),
@@ -80,10 +127,22 @@ export default function ScheduleModal({ isOpen, onClose, cita, citaId }: Schedul
         }
     };
 
+    // Maneja los clicks de los botones
+
+    const handleClickComplete = () => {
+        setIsCompleting(true);
+        completeAppointmentMutate();
+    };
+
     const handleClickReschedule = async () => {
         setIsRescheduling(true);
         rescheduleAppointmentMutate();
         navigate("/citas/agendar"); // Cambiar a navigate para redirigir
+    };
+
+    const handleClickMissed = () => {
+        setIsMissing(true);
+        missedAppointmentMutate();
     };
 
     const handleClickCancel = () => {
@@ -142,25 +201,59 @@ export default function ScheduleModal({ isOpen, onClose, cita, citaId }: Schedul
                     </div>
                 </div>
 
-                <div className="mt-10 flex justify-end gap-8">
-                    <button
-                        className={`px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 ${
-                            isRescheduling && "bg-yellow-300 cursor-not-allowed"
-                        }`}
-                        onClick={handleClickReschedule}
-                        disabled={isRescheduling}
-                    >
-                        {isRescheduling ? "Reagendando..." : "Reagendar Cita"}
-                    </button>
-                    <button
-                        className={`px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 ${
-                            isCancelling && "bg-red-300 cursor-not-allowed"
-                        }`}
-                        onClick={handleClickCancel}
-                        disabled={isCancelling}
-                    >
-                        {isCancelling ? "Cancelando..." : "Cancelar Cita"}
-                    </button>
+                <div className="mt-10 w-full flex flex-col gap-5 justify-center lg:flex-row lg:gap-8 lg:justify-end">
+                    {/* Condicional para mostrar los botones de Reagendar y Cancelar cuando el id_estado es 1 */}
+                    {cita.id_estado === 1 && (
+                        <>
+                            <button
+                                className={`px-4 py-2 bg-yellow-600 text-white rounded-md hover:bg-yellow-700 ${
+                                    isRescheduling && "bg-yellow-300 cursor-not-allowed"
+                                }`}
+                                onClick={handleClickReschedule}
+                                disabled={isRescheduling}
+                            >
+                                {isRescheduling ? "Reagendando..." : "Reagendar Cita"}
+                            </button>
+
+                            <button
+                                className={`px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 ${
+                                    isCancelling && "bg-red-300 cursor-not-allowed"
+                                }  w-full lg:w-auto`}
+                                onClick={handleClickCancel}
+                                disabled={isCancelling}
+                            >
+                                {isCancelling ? "Cancelando..." : "Cancelar Cita"}
+                            </button>
+                        </>
+                    )}
+
+                    {/* Condicional para mostrar los botones de Completar y No asistió cuando el id_estado es 7 */}
+                    {cita.id_estado === 7 && (
+                        <>
+                            <button
+                                className={`px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 ${
+                                    isCompleting && "bg-green-300 cursor-not-allowed"
+                                }`}
+                                onClick={handleClickComplete}
+                                disabled={isCompleting}
+                            >
+                                {isCompleting ? "Confirmando..." : "Confirmar Cita"}
+                            </button>
+
+                            <button
+                                className={`px-4 py-2 bg-slate-600 text-white rounded-md hover:bg-slate-700 ${
+                                    isMissing && "bg-slate-400 cursor-not-allowed"
+                                }`}
+                                onClick={handleClickMissed}
+                                disabled={isMissing}
+                            >
+                                {isMissing ? "Procesando..." : "No asistió"}
+                            </button>
+                        </>
+                    )}
+
+                    {/* Condicional para ocultar todos los botones cuando el id_estado es 4 o 6 */}
+                    {!(cita.id_estado === 4 || cita.id_estado === 6) && <></>}
                 </div>
             </div>
         </div>,
