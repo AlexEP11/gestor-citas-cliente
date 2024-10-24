@@ -27,7 +27,7 @@ export const NavMenu = () => {
                             Agenda De Citas
                         </Link>
                         <Link
-                            to="/"
+                            to="/citas/historial"
                             className="block p-2 text-white hover:scale-105 duration-300 font-outfit "
                         >
                             Historial de Citas

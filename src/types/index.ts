@@ -71,3 +71,14 @@ export type AvailableHours = {
 };
 
 export type DraftHours = z.infer<typeof hoursSchema>;
+
+/* States */
+export const stateSchema = z.object({
+    id_estado: z.number(),
+    nombre: z.string(),
+});
+
+export type State = z.infer<typeof stateSchema>;
+
+/*History*/
+export type FilterOption = "week" | "month" | "year";

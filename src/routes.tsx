@@ -4,6 +4,7 @@ import AppLayout from "./layout/AppLayout";
 import DashboardView from "./views/DashboardView";
 import CreateAppointment from "./views/appointments/CreateAppointment";
 import CreateClient from "./views/clients/CreateClient";
+import HistoryView from "./views/history/HistoryView";
 
 export default function Router() {
     return (
@@ -11,9 +12,11 @@ export default function Router() {
             <Routes>
                 <Route element={<AppLayout />}>
                     <Route path="/" element={<DashboardView />} index /> {/* Agenda */}
-                    <Route path="/citas/agendar" element={<CreateAppointment />} index />{" "}
+                    <Route path="/citas/agendar" element={<CreateAppointment />} />{" "}
                     {/* Agendar cita */}
-                    <Route path="/clientes/registrar" element={<CreateClient />} index />{" "}
+                    <Route path="/clientes/registrar" element={<CreateClient />} />{" "}
+                    {/* Registrar cliente */}
+                    <Route path="/citas/historial" element={<HistoryView />} />{" "}
                     {/* Registrar cliente */}
                 </Route>
             </Routes>

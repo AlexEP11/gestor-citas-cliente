@@ -40,7 +40,7 @@ export default function CreateClient() {
     return (
         <>
             <div className="max-w-3xl mx-auto">
-                <h1 className="text-5xl font-outfit font-extrabold text-charcoal">
+                <h1 className="text-5xl font-outfit font-extrabold text-black">
                     Registrar Cliente
                 </h1>
                 <p className="text-2xl mt-5 text-dark_earth font-bold">

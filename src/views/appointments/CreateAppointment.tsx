@@ -56,9 +56,7 @@ export default function CreateAppointment() {
     return (
         <>
             <div className="max-w-3xl mx-auto">
-                <h1 className="text-5xl font-outfit font-extrabold text-charcoal">
-                    Registrar Cita
-                </h1>
+                <h1 className="text-5xl font-outfit font-extrabold text-black">Registrar Cita</h1>
                 <p className="text-2xl mt-5 text-dark_earth font-bold">
                     Llena el siguiente formulario para registrar una cita
                 </p>

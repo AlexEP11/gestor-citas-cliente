@@ -6,7 +6,7 @@ import Schedule from "../components/schedule/Schedule";
 export default function DashboardView() {
     return (
         <>
-            <h1 className="text-5xl font-outfit font-extrabold  text-charcoal">Agenda De Citas</h1>
+            <h1 className="text-5xl font-outfit font-extrabold  text-black">Agenda De Citas</h1>
             <p className="text-2xl mt-5 text-dark_earth font-bold">Maneja y administra tus citas</p>
 
             <nav className="mt-5 mb-10 flex flex-col md:flex-row gap-7 text-center justify-between">
