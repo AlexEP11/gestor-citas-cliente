@@ -88,12 +88,16 @@ export default function FormAppointment({
         }
     }, [dataToCreateHour, mutate]);
 
-    // Ordenar los clientes alfabéticamente por nombre
-    const sortedClients = clients?.slice().sort((a, b) => {
-        const nameA = `${a.nombre} ${a.apellido_paterno} ${a.apellido_materno}`.toLowerCase();
-        const nameB = `${b.nombre} ${b.apellido_paterno} ${a.apellido_materno}`.toLowerCase();
-        return nameA.localeCompare(nameB);
-    });
+    const sortedClients =
+        Array.isArray(clients) && clients.length > 0
+            ? clients.slice().sort((a, b) => {
+                  const nameA =
+                      `${a.nombre} ${a.apellido_paterno} ${a.apellido_materno}`.toLowerCase();
+                  const nameB =
+                      `${b.nombre} ${b.apellido_paterno} ${b.apellido_materno}`.toLowerCase();
+                  return nameA.localeCompare(nameB);
+              })
+            : [];
 
     // Obtener la fecha actual en formato YYYY-MM-DD
     const getCurrentDate = () => {
