@@ -32,19 +32,22 @@ export default function Schedule() {
         queryFn: getServices,
     });
 
-    // Crear un mapa de clientes que incluye nombre y apellido
-    const clientMap = clients
-        ? Object.fromEntries(
-              clients.map((client) => [
-                  client.id_cliente,
-                  `${client.nombre} ${client.apellido_paterno} ${client.apellido_materno}`,
-              ])
-          )
-        : {};
+    // Crear un mapa de clientes que incluye nombre y apellido, validando que clients sea un array
+    const clientMap =
+        Array.isArray(clients) && clients.length > 0
+            ? Object.fromEntries(
+                  clients.map((client) => [
+                      client.id_cliente,
+                      `${client.nombre} ${client.apellido_paterno} ${client.apellido_materno}`,
+                  ])
+              )
+            : {};
 
-    const serviceMap = services
-        ? Object.fromEntries(services.map((service) => [service.id_servicio, service.nombre]))
-        : {};
+    // Crear un mapa de servicios, validando que services sea un array
+    const serviceMap =
+        Array.isArray(services) && services.length > 0
+            ? Object.fromEntries(services.map((service) => [service.id_servicio, service.nombre]))
+            : {};
 
     const events =
         citas?.map((cita) => ({
