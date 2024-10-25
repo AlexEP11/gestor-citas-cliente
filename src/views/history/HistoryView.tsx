@@ -102,7 +102,6 @@ export default function HistoryView() {
         doc.setFontSize(18);
         doc.setTextColor(0, 0, 0);
         doc.text("Historial de Citas", 105, 15, { align: "center" });
-        doc.setFontSize(12);
         doc.setTextColor(218, 0, 55);
         const headers = [["Cliente", "Servicio", "Fecha", "Hora Inicio", "Hora Fin", "Estado"]];
 
@@ -130,22 +129,26 @@ export default function HistoryView() {
             headStyles: {
                 fillColor: [23, 23, 23],
                 textColor: [255, 255, 255],
-                fontSize: 11,
-                fontStyle: "bold",
+                fontSize: 8,
+                fontStyle: "normal",
                 halign: "center",
             },
+
             margin: { top: 20, left: 10, right: 10 },
         });
 
-        doc.save(`reporte_${currentFilter}.pdf`);
+        const firstAppointmentDate =
+            sortedAppointments!.length > 0
+                ? extractDateFromISO(sortedAppointments![0].fecha_inicio.toString())
+                : "sin_fecha";
+
+        doc.save(`reporte_${currentFilter}_${firstAppointmentDate}.pdf`);
     };
 
-    // Función para manejar el clic en los botones y generar el PDF
+    // Función para manejar el clic en los botones de filtro
     const handleButtonClick = (newFilter: "week" | "month" | "year") => {
         // Actualizamos el estado
         setFilter(newFilter);
-        // Generamos el PDF con el filtro actual
-        generatePDF(newFilter);
     };
 
     return (
@@ -164,7 +167,7 @@ export default function HistoryView() {
                     }`}
                     onClick={() => handleButtonClick("week")}
                 >
-                    Generar Reporte Semanal
+                    Filtro Semanal
                 </button>
                 <button
                     className={`cursor-pointer px-10 py-3 rounded-md text-white font-bold font-outfit transition-colors ${
@@ -174,7 +177,7 @@ export default function HistoryView() {
                     }`}
                     onClick={() => handleButtonClick("month")}
                 >
-                    Registrar Reporte Mensual
+                    Filtro Mensual
                 </button>
                 <button
                     className={`cursor-pointer px-10 py-3 rounded-md text-white font-bold font-outfit transition-colors ${
@@ -184,7 +187,13 @@ export default function HistoryView() {
                     }`}
                     onClick={() => handleButtonClick("year")}
                 >
-                    Generar Reporte Anual
+                    Filtro Anual
+                </button>
+                <button
+                    className=" cursor-pointer px-10 py-3 rounded-md text-white font-bold font-outfit bg-scarlet_red hover:bg-deep_crimson ml-auto"
+                    onClick={() => generatePDF(filter)}
+                >
+                    Generar PDF
                 </button>
             </div>
 

@@ -10,7 +10,7 @@ interface HistoryTableProps {
 
 const HistoryTable = ({ appointments, clientMap, serviceMap, stateMap }: HistoryTableProps) => {
     return (
-        <div className="overflow-x-auto rounded-lg shadow-lg">
+        <div className="overflow-hidden rounded-lg shadow-lg">
             <table className="min-w-full bg-white border border-gray-300 rounded-lg">
                 <thead>
                     <tr className="bg-ebony_black text-white rounded-t-lg">
@@ -28,7 +28,7 @@ const HistoryTable = ({ appointments, clientMap, serviceMap, stateMap }: History
                             key={appointment.id_cita}
                             className={`text-center ${
                                 index % 2 === 0 ? "bg-light_sand_gray" : "bg-white"
-                            } hover:bg-gray-100`}
+                            } hover:bg-gray-100 hover:scale-105 transition-transform `}
                         >
                             <td className="py-3 px-5 border-b border-gray-300">
                                 {clientMap[appointment.id_cliente] || "Cliente Desconocido"}
@@ -37,7 +37,10 @@ const HistoryTable = ({ appointments, clientMap, serviceMap, stateMap }: History
                                 {serviceMap[appointment.id_servicio] || "Servicio Desconocido"}
                             </td>
                             <td className="py-3 px-5 border-b border-gray-300">
-                                {extractDateFromISO(appointment.fecha_inicio.toString())}
+                                {extractDateFromISO(appointment.fecha_inicio.toString())
+                                    .split("-")
+                                    .reverse()
+                                    .join("-")}
                             </td>
                             <td className="py-3 px-5 border-b border-gray-300">
                                 {extractTimeFromISO(appointment.fecha_inicio.toString())}
