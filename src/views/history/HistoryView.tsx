@@ -5,13 +5,22 @@ import { getClients } from "../../api/ClientAPI";
 import { getServices } from "../../api/ServicesAPI";
 import { Appointment, Client, FilterOption, Service, State } from "../../types";
 import moment from "moment";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import { extractDateFromISO, extractTimeFromISO } from "../../utils";
+import HistoryTable from "../../components/history/HistoryTable";
 
 export default function HistoryView() {
     const [filter, setFilter] = useState<FilterOption>("week");
+    const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 768);
+
+    // Update isMobileView based on window resize
+    useEffect(() => {
+        const handleResize = () => setIsMobileView(window.innerWidth <= 768);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
 
     const { data: appointments } = useQuery<Appointment[]>({
         queryKey: ["allAppointments"],
@@ -179,17 +188,26 @@ export default function HistoryView() {
                 </button>
             </div>
 
-            {filteredAppointments?.map((appointment) => (
-                <HistoryCard
-                    key={appointment.id_cita}
-                    appointment={{
-                        ...appointment,
-                        client: clientMap[appointment.id_cliente] || "Cliente Desconocido",
-                        service: serviceMap[appointment.id_servicio] || "Servicio Desconocido",
-                        state: stateMap[appointment.id_estado] || "Estado Desconocido",
-                    }}
+            {isMobileView ? (
+                filteredAppointments?.map((appointment) => (
+                    <HistoryCard
+                        key={appointment.id_cita}
+                        appointment={{
+                            ...appointment,
+                            client: clientMap[appointment.id_cliente] || "Cliente Desconocido",
+                            service: serviceMap[appointment.id_servicio] || "Servicio Desconocido",
+                            state: stateMap[appointment.id_estado] || "Estado Desconocido",
+                        }}
+                    />
+                ))
+            ) : (
+                <HistoryTable
+                    appointments={filteredAppointments || []}
+                    clientMap={clientMap}
+                    serviceMap={serviceMap}
+                    stateMap={stateMap}
                 />
-            ))}
+            )}
         </>
     );
 }

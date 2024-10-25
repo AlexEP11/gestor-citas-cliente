@@ -13,7 +13,7 @@ export default function AuthView() {
 
     // Función para manejar la navegación al admin
     const goToAdmin = () => {
-        window.location.href = `${import.meta.env.VITE_API_URL}/admin`; // Redirigir a la URL del admin de Django
+        window.location.href = `https://kings-man-barber-shop-api.software/admin`; // Redirigir a la URL del admin de Django
     };
 
     useEffect(() => {
@@ -60,7 +60,7 @@ export default function AuthView() {
     };
 
     return (
-        <div className="bg-ebony_black h-screen flex items-center justify-center p-4 ">
+        <div className="bg-ebony_black h-screen flex items-center  justify-center p-4 ">
             <div className="flex flex-col gap-8 items-center">
                 {/* Contenedor del logo y título */}
                 <div className="flex flex-col items-center gap-3 animate-pulse transition-transform duration-300 hover:scale-105 text-center">

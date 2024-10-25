@@ -13,3 +13,31 @@ export function extractDateFromISO(dateTimeString: string): string {
     // Retornar solo la fecha
     return dateOnly;
 }
+
+// Función para determinar el color de texto según el estado
+export function getStatusColor(state: string) {
+    switch (state) {
+        case "Reprogramada":
+            return "text-yellow-500";
+        case "Completada":
+            return "text-[#58d68d]";
+
+        case "Cancelada Barbero":
+            return "text-deep_crimson";
+
+        case "Cancelada Cliente":
+            return "text-deep_crimson";
+
+        case "Programada":
+            return "text-[#a569bd]";
+
+        case "Pendiente":
+            return "text-[#5dade2]";
+
+        case "No asistida":
+            return "text-[#99a3a4]";
+
+        default:
+            return "text-black";
+    }
+}
