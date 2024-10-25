@@ -26,7 +26,7 @@ export default function CreateClient() {
         mutationFn: createClient,
         onSuccess: (data) => {
             toast.success(data.message);
-            navigate("/");
+            navigate("/citas");
         },
         onError: (error) => {
             toast.error(error.message);
@@ -50,7 +50,7 @@ export default function CreateClient() {
                 <nav className="mt-5 mb-10 flex flex-col md:flex-row justify-between gap-6">
                     <Link
                         className="bg-scarlet_red hover:bg-deep_crimson cursor-pointer px-10 py-3 rounded-md font-outfit text-white font-bold transition-colors text-center"
-                        to="/"
+                        to="/citas"
                     >
                         Agenda de Citas
                     </Link>
@@ -70,7 +70,7 @@ export default function CreateClient() {
 
                     <input
                         type="submit"
-                        className="w-full bg-dark_earth p-3 font-bold text-white uppercase rounded-md cursor-pointer hover:bg-[#473c2f] transition-colors"
+                        className="w-full bg-dark_earth p-3 font-bold text-white uppercase rounded-md cursor-pointer hover:bg-black transition-colors"
                         value="Registrar Cliente"
                     />
                 </form>

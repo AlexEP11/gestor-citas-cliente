@@ -1,8 +1,20 @@
 import { Popover, PopoverButton, PopoverPanel, Transition } from "@headlessui/react";
 import { Bars3Icon } from "@heroicons/react/20/solid";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export const NavMenu = () => {
+    const navigate = useNavigate(); // Hook para redireccionar
+
+    // Función para cerrar sesión
+    const handleLogout = () => {
+        // Eliminar los tokens del localStorage
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+
+        // Redirigir a la página de inicio de sesión
+        navigate("/");
+    };
+
     return (
         <Popover className="relative">
             <PopoverButton className="inline-flex items-center gap-x-1 text-sm font-semibold leading-6 p-1 rounded-lg bg-scarlet_red hover:bg-deep_crimson transition-colors">
@@ -19,9 +31,9 @@ export const NavMenu = () => {
             >
                 <PopoverPanel className="absolute left-1/2 z-10 mt-5 flex w-screen lg:max-w-min -translate-x-1/2 lg:-translate-x-48">
                     <div className="w-full lg:w-56 shrink rounded-xl bg-scarlet_red p-4 text-sm font-semibold leading-6 text-gray-900 shadow-lg ring-1 ring-gray-900/5">
-                        <p className="text-center text-white font-outfit">Hola: Usuario</p>
+                        <p className="text-center text-white font-outfit">Menú de Opciones</p>
                         <Link
-                            to="/"
+                            to="/citas"
                             className="block p-2 text-white hover:scale-105 duration-300 font-outfit "
                         >
                             Agenda De Citas
@@ -35,7 +47,7 @@ export const NavMenu = () => {
                         <button
                             className="block p-2 text-white hover:scale-105 duration-300 font-outfit"
                             type="button"
-                            onClick={() => {}}
+                            onClick={handleLogout} // Llama a la función de cerrar sesión
                         >
                             Cerrar Sesión
                         </button>

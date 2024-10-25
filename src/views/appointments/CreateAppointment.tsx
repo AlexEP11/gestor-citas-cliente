@@ -9,7 +9,6 @@ import { useState } from "react"; // Importar useState
 
 export default function CreateAppointment() {
     const initialValues: AppointmentFormData = {
-        id_barbero: 1, // Cambiar dinámicamente
         id_cliente: 0,
         id_servicio: 0,
         fecha_inicio: "",
@@ -64,7 +63,7 @@ export default function CreateAppointment() {
                 <nav className="mt-5 mb-10 flex flex-col md:flex-row justify-between gap-6">
                     <Link
                         className="bg-scarlet_red hover:bg-deep_crimson cursor-pointer px-10 py-3 rounded-md font-outfit text-white font-bold transition-colors text-center"
-                        to="/"
+                        to="/citas"
                     >
                         Agenda de Citas
                     </Link>

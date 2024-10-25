@@ -25,7 +25,6 @@ export default function FormAppointment({
     const [selectedDate, setSelectedDate] = useState("");
     const [availableHours, setAvailableHours] = useState<string[]>([]); // Estado para las horas disponibles
     const [dataToCreateHour, setDataToCreateHour] = useState({
-        id_barbero: 1,
         id_servicio: 0,
         fecha: "",
     });
@@ -34,7 +33,7 @@ export default function FormAppointment({
     useEffect(() => {
         setSelectedDate(""); // Resetea la fecha
         setAvailableHours([]); // Resetea las horas disponibles
-        setDataToCreateHour({ id_barbero: 1, id_servicio: 0, fecha: "" }); // Resetea los datos de la cita
+        setDataToCreateHour({ id_servicio: 0, fecha: "" }); // Resetea los datos de la cita
     }, [resetStatesForm]);
 
     // Función manejadora para el evento onChange de la fecha

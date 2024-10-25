@@ -1,7 +1,6 @@
 import { Outlet, Link } from "react-router-dom";
 import Logo from "../components/Logo";
 import { NavMenu } from "../components/NavMenu";
-import { Slide, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function AppLayout() {
@@ -11,7 +10,7 @@ export default function AppLayout() {
                 <div className="flex flex-col gap-7 px-2 lg:flex-row lg:gap-0 lg:px-0 items-center justify-between">
                     <div className="flex items-center gap-3 justify-center">
                         <Logo />
-                        <Link className="font-outfit font-bold text-3xl text-white" to="/">
+                        <Link className="font-outfit font-bold text-3xl text-white" to="/citas">
                             King´s Man Barberia
                         </Link>
                     </div>
@@ -23,15 +22,6 @@ export default function AppLayout() {
             <main className="container max-w-screen-xl mx-auto mt-10 p-5">
                 <Outlet />
             </main>
-
-            <ToastContainer
-                pauseOnFocusLoss={false}
-                pauseOnHover={false}
-                position="bottom-right"
-                theme="dark"
-                transition={Slide}
-                draggable
-            />
         </>
     );
 }

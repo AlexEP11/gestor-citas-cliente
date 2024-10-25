@@ -14,7 +14,6 @@ export const appointmentSchema = z.object({
 export type Appointment = z.infer<typeof appointmentSchema>;
 
 export type AppointmentFormData = {
-    id_barbero?: Appointment["id_barbero"];
     id_cliente: Appointment["id_cliente"];
     id_servicio: Appointment["id_servicio"];
     fecha_inicio: string;
@@ -61,7 +60,6 @@ export type Service = z.infer<typeof serviceSchema>;
 /* Hours */
 
 export const hoursSchema = z.object({
-    id_barbero: z.number(),
     id_servicio: z.number(),
     fecha: z.string(),
 });
@@ -82,3 +80,12 @@ export type State = z.infer<typeof stateSchema>;
 
 /*History*/
 export type FilterOption = "week" | "month" | "year";
+
+/* Auth */
+
+export const authSchema = z.object({
+    username: z.string(),
+    password: z.string(),
+});
+
+export type Auth = z.infer<typeof authSchema>;

@@ -5,7 +5,7 @@ import { Appointment, AppointmentFormData } from "../types";
 // Obtiene todas las citas
 export async function getAppointments() {
     try {
-        const { data } = await api.get("/citas/");
+        const { data } = await api.get("/citas/barbero/general/");
         return data;
     } catch (error) {
         if (isAxiosError(error)) {
@@ -23,9 +23,9 @@ export async function getAppointments() {
 }
 
 // Obtiene las citas filtradas por el id del barbero y trae las citas que están pendientes (no canceladas)
-export async function getAppointmentsFilter(barberId: Appointment["id_barbero"]) {
+export async function getAppointmentsFilter() {
     try {
-        const { data } = await api.get(`/citas/barbero/${barberId}/filter`);
+        const { data } = await api.get(`/citas/barbero/filter/`);
         return data;
     } catch (error) {
         if (isAxiosError(error)) {

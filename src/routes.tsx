@@ -5,13 +5,15 @@ import DashboardView from "./views/DashboardView";
 import CreateAppointment from "./views/appointments/CreateAppointment";
 import CreateClient from "./views/clients/CreateClient";
 import HistoryView from "./views/history/HistoryView";
+import AuthView from "./views/auth/AuthView";
 
 export default function Router() {
     return (
         <BrowserRouter>
             <Routes>
+                <Route path="/" element={<AuthView />} index />
                 <Route element={<AppLayout />}>
-                    <Route path="/" element={<DashboardView />} index /> {/* Agenda */}
+                    <Route path="/citas" element={<DashboardView />} index /> {/* Agenda */}
                     <Route path="/citas/agendar" element={<CreateAppointment />} />{" "}
                     {/* Agendar cita */}
                     <Route path="/clientes/registrar" element={<CreateClient />} />{" "}
