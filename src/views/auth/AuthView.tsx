@@ -13,7 +13,7 @@ export default function AuthView() {
 
     // Función para manejar la navegación al admin
     const goToAdmin = () => {
-        window.location.href = "http://146.190.217.249/admin"; // Redirigir a la URL del admin de Django
+        window.location.href = `${import.meta.env.VITE_API_URL}/admin`; // Redirigir a la URL del admin de Django
     };
 
     useEffect(() => {

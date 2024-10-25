@@ -2,7 +2,7 @@
     "routes": [
         {
             "src": "/api/(.*)",
-            "dest": "https://146.190.217.249/api/$1"
+            "dest": "https://kings-man-barber-shop-api.software/api/$1"
         },
         {
             "src": "/[^.]+",
