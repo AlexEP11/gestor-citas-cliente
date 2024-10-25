@@ -20,6 +20,7 @@ export default function Schedule() {
     const { data: citas } = useQuery<Appointment[]>({
         queryKey: ["appointmentFilter"],
         queryFn: () => getAppointmentsFilter(),
+        retry: 2,
     });
 
     const { data: clients } = useQuery<Client[]>({
