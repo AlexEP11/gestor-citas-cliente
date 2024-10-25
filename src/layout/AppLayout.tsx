@@ -9,7 +9,9 @@ export default function AppLayout() {
             <header className="bg-ebony_black  p-10">
                 <div className="flex flex-col gap-7 px-2 lg:flex-row lg:gap-0 lg:px-0 items-center justify-between">
                     <div className="flex items-center gap-3 justify-center">
-                        <Logo />
+                        <Link to="/citas">
+                            <Logo />
+                        </Link>
                         <Link className="font-outfit font-bold text-3xl text-white" to="/citas">
                             King´s Man Barberia
                         </Link>

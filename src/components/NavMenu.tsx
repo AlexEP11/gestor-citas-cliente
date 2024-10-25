@@ -39,6 +39,18 @@ export const NavMenu = () => {
                             Agenda De Citas
                         </Link>
                         <Link
+                            to="/citas/agendar"
+                            className="block p-2 text-white hover:scale-105 duration-300 font-outfit "
+                        >
+                            Registar Cita
+                        </Link>
+                        <Link
+                            to="/clientes/registrar"
+                            className="block p-2 text-white hover:scale-105 duration-300 font-outfit "
+                        >
+                            Registar Cliente
+                        </Link>
+                        <Link
                             to="/citas/historial"
                             className="block p-2 text-white hover:scale-105 duration-300 font-outfit "
                         >
