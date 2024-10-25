@@ -3,7 +3,7 @@ import { Auth } from "../types";
 
 export async function authLogin(dataAuth: Auth) {
     try {
-        const { data } = await axios.post("http://146.190.217.249/api/token/", dataAuth);
+        const { data } = await axios.post("https://146.190.217.249/api/token/", dataAuth);
 
         localStorage.setItem("accessToken", data.access);
         localStorage.setItem("refreshToken", data.refresh);
