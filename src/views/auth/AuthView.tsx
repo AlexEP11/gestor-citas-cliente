@@ -49,8 +49,7 @@ export default function AuthView() {
             navigate("/citas");
         },
         onError: () => {
-            console.log("Error en la petición:"); // Revisa el error
-            toast.error("Ocurrió un error al iniciar sesión");
+            toast.error("Ocurrió un error al iniciar sesión, verifique bien sus credenciales");
             navigate("/");
         },
     });
