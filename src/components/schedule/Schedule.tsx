@@ -50,16 +50,18 @@ export default function Schedule() {
             : {};
 
     const events =
-        citas?.map((cita) => ({
-            id: cita.id_cita,
-            title: `Cita con ${clientMap[cita.id_cliente] || "Cliente Desconocido"}`,
-            start: moment(cita.fecha_inicio).toDate(),
-            end: moment(cita.fecha_finalizacion).toDate(),
-            cliente: clientMap[cita.id_cliente] || "Cliente Desconocido",
-            hora_inicio: cita.fecha_inicio,
-            servicio: serviceMap[cita.id_servicio] || "Servicio Desconocido",
-            id_estado: cita.id_estado,
-        })) || ([] as AppointmentFormDataSchedule[]);
+        Array.isArray(citas) && citas.length > 0
+            ? citas.map((cita) => ({
+                  id: cita.id_cita,
+                  title: `Cita con ${clientMap[cita.id_cliente] || "Cliente Desconocido"}`,
+                  start: moment(cita.fecha_inicio).toDate(),
+                  end: moment(cita.fecha_finalizacion).toDate(),
+                  cliente: clientMap[cita.id_cliente] || "Cliente Desconocido",
+                  hora_inicio: cita.fecha_inicio,
+                  servicio: serviceMap[cita.id_servicio] || "Servicio Desconocido",
+                  id_estado: cita.id_estado,
+              }))
+            : ([] as AppointmentFormDataSchedule[]);
 
     const handleSelectEvent = (e: AppointmentFormDataSchedule) => {
         setSelectedCita(e);
