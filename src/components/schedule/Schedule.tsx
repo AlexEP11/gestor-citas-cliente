@@ -63,8 +63,6 @@ export default function Schedule() {
           }))
         : ([] as AppointmentFormDataSchedule[]);
 
-    console.log(events);
-
     const handleSelectEvent = (e: AppointmentFormDataSchedule) => {
         setSelectedCita(e);
         setModalOpen(true);
