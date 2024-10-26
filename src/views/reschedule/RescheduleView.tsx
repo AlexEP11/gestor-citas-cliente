@@ -53,9 +53,9 @@ export default function RescheduleView() {
     const { mutate } = useMutation({
         mutationKey: ["createAppointment"],
         mutationFn: createAppointment,
-        onSuccess: (data) => {
+        onSuccess: () => {
             rescheduleAppointmentMutate();
-            toast.success(data.message);
+            toast.success("Cita reagendada correctamente");
             reset();
             setIsSubmitting(false); // Restablecer el estado después de la mutación
         },
