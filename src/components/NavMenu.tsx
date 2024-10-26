@@ -42,13 +42,13 @@ export const NavMenu = () => {
                             to="/citas/agendar"
                             className="block p-2 text-white hover:scale-105 duration-300 font-outfit "
                         >
-                            Registar Cita
+                            Registrar Cita
                         </Link>
                         <Link
                             to="/clientes/registrar"
                             className="block p-2 text-white hover:scale-105 duration-300 font-outfit "
                         >
-                            Registar Cliente
+                            Registrar Cliente
                         </Link>
                         <Link
                             to="/citas/historial"
