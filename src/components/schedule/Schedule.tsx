@@ -20,7 +20,6 @@ export default function Schedule() {
     const { data: citas } = useQuery<Appointment[]>({
         queryKey: ["appointmentFilter"],
         queryFn: () => getAppointmentsFilter(),
-        retry: 2,
     });
 
     const { data: clients } = useQuery<Client[]>({
@@ -57,9 +56,11 @@ export default function Schedule() {
               start: moment(cita.fecha_inicio).toDate(),
               end: moment(cita.fecha_finalizacion).toDate(),
               cliente: clientMap[cita.id_cliente] || "Cliente Desconocido",
-              hora_inicio: cita.fecha_inicio,
               servicio: serviceMap[cita.id_servicio] || "Servicio Desconocido",
+              hora_inicio: cita.fecha_inicio,
               id_estado: cita.id_estado,
+              id_cliente: cita.id_cliente,
+              id_servicio: cita.id_servicio,
           }))
         : ([] as AppointmentFormDataSchedule[]);
 
@@ -159,6 +160,8 @@ export default function Schedule() {
                     hora_inicio: new Date(selectedCita?.hora_inicio!) || new Date(),
                     servicio: selectedCita?.servicio || 0,
                     id_estado: selectedCita?.id_estado || 0,
+                    id_cliente: selectedCita?.id_cliente || 0,
+                    id_servicio: selectedCita?.id_servicio || 0,
                 }}
             />
         </>

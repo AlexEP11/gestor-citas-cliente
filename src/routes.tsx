@@ -6,6 +6,7 @@ import CreateAppointment from "./views/appointments/CreateAppointment";
 import CreateClient from "./views/clients/CreateClient";
 import HistoryView from "./views/history/HistoryView";
 import AuthView from "./views/auth/AuthView";
+import RescheduleView from "./views/reschedule/RescheduleView";
 
 export default function Router() {
     return (
@@ -19,6 +20,8 @@ export default function Router() {
                     <Route path="/clientes/registrar" element={<CreateClient />} />{" "}
                     {/* Registrar cliente */}
                     <Route path="/citas/historial" element={<HistoryView />} />{" "}
+                    {/* Registrar cliente */}
+                    <Route path="/citas/reagendar" element={<RescheduleView />} />{" "}
                     {/* Registrar cliente */}
                 </Route>
             </Routes>

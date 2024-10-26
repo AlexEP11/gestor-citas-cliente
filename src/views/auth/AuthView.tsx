@@ -40,12 +40,7 @@ export default function AuthView() {
         mutationFn: authLogin,
         onSuccess: () => {
             toast.success("Inicio de sesión exitoso");
-            toast.info("Para mas opciones, de clic en un evento de la agenda", {
-                autoClose: false,
-                hideProgressBar: false,
-                closeOnClick: true,
-                draggable: true,
-            });
+            toast.info("Para mas opciones, de clic en un evento de la agenda");
             navigate("/citas");
         },
         onError: () => {

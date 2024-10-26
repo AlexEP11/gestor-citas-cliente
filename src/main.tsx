@@ -18,6 +18,7 @@ createRoot(document.getElementById("root")!).render(
                 theme="colored"
                 transition={Slide}
                 draggable
+                closeOnClick={true}
             />
         </QueryClientProvider>
     </StrictMode>

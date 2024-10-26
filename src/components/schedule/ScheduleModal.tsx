@@ -4,7 +4,6 @@ import {
     cancelAppointment,
     completeAppointment,
     missedAppointment,
-    rescheduleAppointment,
 } from "../../api/AppointmentAPI";
 import { Appointment } from "../../types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -21,6 +20,8 @@ type ScheduleModalProps = {
         hora_inicio: Appointment["fecha_inicio"];
         servicio: Appointment["id_servicio"];
         id_estado: Appointment["id_estado"];
+        id_cliente: Appointment["id_cliente"];
+        id_servicio: Appointment["id_servicio"];
     };
 };
 
@@ -57,25 +58,6 @@ export default function ScheduleModal({ isOpen, onClose, cita, citaId }: Schedul
         },
         onError: () => {
             toast.error("Ocurrió un error al completar la cita");
-            setIsRescheduling(false);
-        },
-    });
-
-    // Reagenda la cita
-    const { mutate: rescheduleAppointmentMutate } = useMutation({
-        mutationKey: ["rescheduleAppointment"],
-        mutationFn: () => rescheduleAppointment(citaId),
-        onSuccess: () => {
-            toast.info(`Reagende la cita de ${cita.cliente}`);
-            onClose();
-            queryClient.invalidateQueries({
-                queryKey: ["appointmentFilter"],
-                exact: true,
-            });
-            setIsRescheduling(false);
-        },
-        onError: () => {
-            toast.error("Ocurrió un error al reagendar la cita");
             setIsRescheduling(false);
         },
     });
@@ -133,8 +115,14 @@ export default function ScheduleModal({ isOpen, onClose, cita, citaId }: Schedul
 
     const handleClickReschedule = async () => {
         setIsRescheduling(true);
-        rescheduleAppointmentMutate();
-        navigate("/citas/agendar"); // Cambiar a navigate para redirigir
+        toast.info(`Reagende la cita de ${cita.cliente}`);
+        navigate("/citas/reagendar", {
+            state: {
+                clientId: cita.id_cliente,
+                clientName: cita.cliente,
+                citaId,
+            },
+        });
     };
 
     const handleClickMissed = () => {
