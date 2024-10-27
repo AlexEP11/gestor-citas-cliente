@@ -246,28 +246,29 @@ export default function ScheduleModal({ isOpen, onClose, cita, citaId }: Schedul
                                         </>
                                     )}
 
-                                    {cita.id_estado === 2 && (
-                                        <button
-                                            className={`px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 ${
-                                                isCompleting && "bg-green-300 cursor-not-allowed"
-                                            }`}
-                                            onClick={handleClickComplete}
-                                            disabled={isCompleting}
-                                        >
-                                            {isCompleting ? "Completando..." : "Completar Cita"}
-                                        </button>
-                                    )}
+                                    {cita.id_estado === 7 && (
+                                        <>
+                                            <button
+                                                className={`px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 ${
+                                                    isCompleting &&
+                                                    "bg-green-300 cursor-not-allowed"
+                                                }`}
+                                                onClick={handleClickComplete}
+                                                disabled={isCompleting}
+                                            >
+                                                {isCompleting ? "Completando..." : "Completar Cita"}
+                                            </button>
 
-                                    {cita.id_estado === 3 && (
-                                        <button
-                                            className={`px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 ${
-                                                isMissing && "bg-blue-300 cursor-not-allowed"
-                                            }`}
-                                            onClick={handleClickMissed}
-                                            disabled={isMissing}
-                                        >
-                                            {isMissing ? "Marcando..." : "No Asistió"}
-                                        </button>
+                                            <button
+                                                className={`px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 ${
+                                                    isMissing && "bg-gray-300 cursor-not-allowed"
+                                                }`}
+                                                onClick={handleClickMissed}
+                                                disabled={isMissing}
+                                            >
+                                                {isMissing ? "Marcando..." : "No Asistió"}
+                                            </button>
+                                        </>
                                     )}
                                 </div>
                             </Dialog.Panel>
