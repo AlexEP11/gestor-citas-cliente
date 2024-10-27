@@ -137,12 +137,11 @@ export default function HistoryView() {
             margin: { top: 20, left: 10, right: 10 },
         });
 
-        const firstAppointmentDate =
-            sortedAppointments!.length > 0
-                ? extractDateFromISO(sortedAppointments![0].fecha_inicio.toString())
-                : "sin_fecha";
-
-        doc.save(`reporte_${currentFilter}_${firstAppointmentDate}.pdf`);
+        doc.save(
+            `reporte_${currentFilter}_${new Date().getDate()}-${
+                new Date().getMonth() + 1
+            }-${new Date().getFullYear()}.pdf`
+        );
     };
 
     // Función para manejar el clic en los botones de filtro
