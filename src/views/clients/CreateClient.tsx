@@ -1,14 +1,13 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import FormClient from "../../components/clients/FormClient";
 import { ClientFormData } from "../../types";
 import { createClient } from "../../api/ClientAPI";
 import { toast } from "react-toastify";
 import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
 
 export default function CreateClient() {
-    const navigate = useNavigate();
-
     const initialValues: ClientFormData = {
         nombre: "",
         apellido_paterno: "",
@@ -20,13 +19,17 @@ export default function CreateClient() {
         register,
         handleSubmit,
         formState: { errors },
+        reset,
     } = useForm({ defaultValues: initialValues });
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const { mutate } = useMutation({
         mutationFn: createClient,
         onSuccess: (data) => {
             toast.success(data.message);
-            navigate("/citas");
+            setIsSubmitting(false); // Restablecer el estado después de la mutación
+            reset();
         },
         onError: (error) => {
             toast.error(error.message);
@@ -34,6 +37,7 @@ export default function CreateClient() {
     });
 
     const handleForm = async (formData: ClientFormData) => {
+        setIsSubmitting(true); // Establecer el estado a verdadero al enviar el formulario
         mutate(formData);
     };
 
@@ -67,11 +71,15 @@ export default function CreateClient() {
                     onSubmit={handleSubmit(handleForm)}
                 >
                     <FormClient register={register} errors={errors} />
-
                     <input
                         type="submit"
-                        className="w-full bg-dark_earth p-3 font-bold text-white uppercase rounded-md cursor-pointer hover:bg-black transition-colors"
-                        value="Registrar Cliente"
+                        className={`w-full p-3 font-bold text-white uppercase rounded-md cursor-pointer mt-3 transition-colors ${
+                            isSubmitting
+                                ? "bg-gray-400 cursor-not-allowed"
+                                : "bg-dark_earth hover:bg-black"
+                        }`}
+                        value={isSubmitting ? "Registrando..." : "Registrar Cliente"}
+                        disabled={isSubmitting} // Deshabilitar el botón si se está enviando/>
                     />
                 </form>
             </div>
