@@ -67,6 +67,12 @@ export default function CreateAppointment() {
                     >
                         Agenda de Citas
                     </Link>
+                    <Link
+                        className="bg-scarlet_red hover:bg-deep_crimson cursor-pointer px-10 py-3 rounded-md font-outfit text-white font-bold transition-colors text-center"
+                        to="/clientes/registrar"
+                    >
+                        Registrar Cliente
+                    </Link>
                 </nav>
 
                 <form
