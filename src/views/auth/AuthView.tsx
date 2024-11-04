@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import Logo from "../../components/Logo";
 import ErrorMessage from "../../components/ErrorMessage";
 import { Auth } from "../../types";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { authLogin } from "../../api/AuthAPI";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -35,12 +35,15 @@ export default function AuthView() {
     } = useForm({ defaultValues: initialValuesAuth });
 
     // Mutación para enviar los datos de autenticación
+    const queryClient = useQueryClient();
+
     const { mutate } = useMutation({
         mutationKey: ["auth"],
         mutationFn: authLogin,
         onSuccess: () => {
             toast.success("Inicio de sesión exitoso");
             toast.info("Para mas opciones, de clic en un evento de la agenda");
+            queryClient.clear(); // Borrar cache de todas las peticiones
             navigate("/citas");
         },
         onError: () => {
