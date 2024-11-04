@@ -13,11 +13,12 @@ import HistoryTable from "../../components/history/HistoryTable";
 
 export default function HistoryView() {
     const [filter, setFilter] = useState<FilterOption>("week");
-    const [isMobileView, setIsMobileView] = useState(window.innerWidth <= 768);
+    const [selectedClient, setSelectedClient] = useState<string | null>(null);
+    const [selectedService, setSelectedService] = useState<string | null>(null);
+    const [isMobileView, setIsMobileView] = useState(window.innerWidth < 768);
 
-    // Update isMobileView based on window resize
     useEffect(() => {
-        const handleResize = () => setIsMobileView(window.innerWidth <= 768);
+        const handleResize = () => setIsMobileView(window.innerWidth < 768);
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);
@@ -36,7 +37,6 @@ export default function HistoryView() {
         queryFn: getSatesAppointments,
     });
 
-    // Crear mapas para clientes, servicios y estados
     const clientMap = clients
         ? Object.fromEntries(
               clients.map((client) => [
@@ -52,37 +52,46 @@ export default function HistoryView() {
         ? Object.fromEntries(states.map((state) => [state.id_estado, state.nombre]))
         : {};
 
-    // Función para filtrar y ordenar las citas
     const getFilteredAndSortedAppointments = (currentFilter: FilterOption) => {
         const now = moment();
 
         const filteredAppointments = appointments?.filter((appointment) => {
             const appointmentDate = moment(appointment.fecha_inicio);
-            switch (currentFilter) {
-                case "week":
-                    return appointmentDate.isBetween(
-                        now.clone().startOf("week"),
-                        now.clone().endOf("week"),
-                        null,
-                        "[]"
-                    );
-                case "month":
-                    return appointmentDate.isBetween(
-                        now.clone().startOf("month"),
-                        now.clone().endOf("month"),
-                        null,
-                        "[]"
-                    );
-                case "year":
-                    return appointmentDate.isBetween(
-                        now.clone().startOf("year"),
-                        now.clone().endOf("year"),
-                        null,
-                        "[]"
-                    );
-                default:
-                    return true;
-            }
+            const filterByDate = (() => {
+                switch (currentFilter) {
+                    case "week":
+                        return appointmentDate.isBetween(
+                            now.clone().startOf("week"),
+                            now.clone().endOf("week"),
+                            null,
+                            "[]"
+                        );
+                    case "month":
+                        return appointmentDate.isBetween(
+                            now.clone().startOf("month"),
+                            now.clone().endOf("month"),
+                            null,
+                            "[]"
+                        );
+                    case "year":
+                        return appointmentDate.isBetween(
+                            now.clone().startOf("year"),
+                            now.clone().endOf("year"),
+                            null,
+                            "[]"
+                        );
+                    default:
+                        return true;
+                }
+            })();
+            const matchesClient = selectedClient
+                ? String(appointment.id_cliente) === selectedClient
+                : true;
+            const matchesService = selectedService
+                ? String(appointment.id_servicio) === selectedService
+                : true;
+
+            return filterByDate && matchesClient && matchesService;
         });
 
         return filteredAppointments?.sort((a, b) =>
@@ -92,13 +101,10 @@ export default function HistoryView() {
 
     const filteredAppointments = getFilteredAndSortedAppointments(filter);
 
-    // Función para generar el PDF
     const generatePDF = (currentFilter: FilterOption) => {
         const sortedAppointments = getFilteredAndSortedAppointments(currentFilter);
 
-        const doc = new jsPDF({
-            compress: true,
-        });
+        const doc = new jsPDF({ compress: true });
         doc.setFontSize(18);
         doc.setTextColor(0, 0, 0);
         doc.text("Historial de Citas", 105, 15, { align: "center" });
@@ -133,7 +139,6 @@ export default function HistoryView() {
                 fontStyle: "normal",
                 halign: "center",
             },
-
             margin: { top: 20, left: 10, right: 10 },
         });
 
@@ -142,12 +147,6 @@ export default function HistoryView() {
                 new Date().getMonth() + 1
             }-${new Date().getFullYear()}.pdf`
         );
-    };
-
-    // Función para manejar el clic en los botones de filtro
-    const handleButtonClick = (newFilter: "week" | "month" | "year") => {
-        // Actualizamos el estado
-        setFilter(newFilter);
     };
 
     return (
@@ -164,7 +163,7 @@ export default function HistoryView() {
                             ? "bg-deep_crimson"
                             : "bg-scarlet_red hover:bg-deep_crimson"
                     }`}
-                    onClick={() => handleButtonClick("week")}
+                    onClick={() => setFilter("week")}
                 >
                     Filtro Semanal
                 </button>
@@ -174,7 +173,7 @@ export default function HistoryView() {
                             ? "bg-deep_crimson"
                             : "bg-scarlet_red hover:bg-deep_crimson"
                     }`}
-                    onClick={() => handleButtonClick("month")}
+                    onClick={() => setFilter("month")}
                 >
                     Filtro Mensual
                 </button>
@@ -184,16 +183,46 @@ export default function HistoryView() {
                             ? "bg-deep_crimson"
                             : "bg-scarlet_red hover:bg-deep_crimson"
                     }`}
-                    onClick={() => handleButtonClick("year")}
+                    onClick={() => setFilter("year")}
                 >
                     Filtro Anual
                 </button>
                 <button
-                    className=" cursor-pointer px-10 py-3 rounded-md text-white font-bold font-outfit bg-scarlet_red hover:bg-deep_crimson ml-auto"
+                    className="fixed bottom-7 right-7 md:static cursor-pointer px-10 py-3 rounded-md text-white font-bold font-outfit bg-scarlet_red hover:bg-deep_crimson ml-auto"
                     onClick={() => generatePDF(filter)}
                 >
-                    Generar PDF
+                    {isMobileView ? "PDF" : "Generar PDF"}
                 </button>
+            </div>
+            <div className="flex flex-col gap-5 mb-5 md:flex-row">
+                <select
+                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:border-transparent text-black cursor-pointer"
+                    onChange={(e) => setSelectedClient(e.target.value || null)}
+                    value={selectedClient || ""}
+                >
+                    <option value="" disabled>
+                        Filtrar por Cliente
+                    </option>
+                    {clients?.map((client) => (
+                        <option key={client.id_cliente} value={client.id_cliente}>
+                            {clientMap[client.id_cliente]}
+                        </option>
+                    ))}
+                </select>
+                <select
+                    className="w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:border-transparent text-black cursor-pointer"
+                    onChange={(e) => setSelectedService(e.target.value || null)}
+                    value={selectedService || ""}
+                >
+                    <option value="" disabled>
+                        Filtrar por Servicio
+                    </option>
+                    {services?.map((service) => (
+                        <option key={service.id_servicio} value={service.id_servicio}>
+                            {serviceMap[service.id_servicio]}
+                        </option>
+                    ))}
+                </select>
             </div>
 
             {isMobileView ? (
